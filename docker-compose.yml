@@ -44,7 +44,7 @@ services:
     volumes:
     - mcp-cache:/data
   mcp-server:
-    container_name: mcp-server
+    container_name: dhv01mcp
     depends_on:
     - mcp-redis
     - mcp-postgres

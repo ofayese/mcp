@@ -85,7 +85,8 @@ cache:
   max_size: "100MB"
 
 # Secrets configuration
-secrets_file: "c:/Users/ofayese/.docker/mcp/secrets.yaml"
+secrets:
+  file: "c:/Users/ofayese/.docker/mcp/secrets.yaml"
 
 # Feature flags
 features:
