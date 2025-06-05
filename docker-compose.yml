@@ -1,0 +1,127 @@
+networks:
+  mcp-network:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.40.1.0/24
+      driver: default
+services:
+  mcp-postgres:
+    container_name: mcp-postgres
+    environment:
+    - POSTGRES_DB=${POSTGRES_DB:-mcp}
+    - POSTGRES_USER=${POSTGRES_USER:-mcp}
+    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-mcp_password}
+    healthcheck:
+      interval: 30s
+      retries: 3
+      test:
+      - CMD-SHELL
+      - pg_isready -U ${POSTGRES_USER:-mcp}
+      timeout: 10s
+    image: postgres:15-alpine
+    networks:
+    - mcp-network
+    restart: unless-stopped
+    volumes:
+    - mcp-data:/var/lib/postgresql/data
+    - ./init-db:/docker-entrypoint-initdb.d:ro
+  mcp-redis:
+    command: redis-server --appendonly yes
+    container_name: mcp-redis
+    healthcheck:
+      interval: 30s
+      retries: 3
+      test:
+      - CMD
+      - redis-cli
+      - ping
+      timeout: 10s
+    image: redis:7-alpine
+    networks:
+    - mcp-network
+    restart: unless-stopped
+    volumes:
+    - mcp-cache:/data
+  mcp-server:
+    container_name: mcp-server
+    depends_on:
+    - mcp-redis
+    - mcp-postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    environment:
+    - MCP_CONFIG_PATH=/app/config.yaml
+    - MCP_SECRETS_PATH=/app/secrets.yaml
+    - MCP_REGISTRY_PATH=/app/registry.yaml
+    - MCP_NETWORK=mcp-network
+    - DOCKER_HOST=unix:///var/run/docker.sock
+    - LOG_LEVEL=${LOG_LEVEL:-info}
+    - MCP_DATA_DIR=/app/data
+    - MCP_CACHE_DIR=/app/cache
+    healthcheck:
+      interval: 30s
+      retries: 3
+      start_period: 40s
+      test:
+      - CMD
+      - curl
+      - -f
+      - http://localhost:8811/health
+      timeout: 10s
+    image: mcp/docker:latest
+    labels:
+    - com.docker.compose.project=mcp
+    - com.docker.compose.service=mcp-server
+    - traefik.enable=true
+    - traefik.http.routers.mcp.rule=Host(`mcp.localhost`)
+    networks:
+    - mcp-network
+    ports:
+      - "127.0.0.1:0:8811"
+      - "127.0.0.1:8812:8812"
+    restart: unless-stopped
+    volumes:
+    - ./config.yaml:/app/config.yaml:ro
+    - ./secrets.yaml:/app/secrets.yaml:ro
+    - ./registry.yaml:/app/registry.yaml:ro
+    - mcp-data:/app/data
+    - mcp-logs:/app/logs
+    - mcp-cache:/app/cache
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    - C:\:/host/c:ro
+  traefik:
+    container_name: mcp-traefik
+    image: traefik:v3.0
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.dashboard.rule=Host(`traefik.localhost`)
+    - traefik.http.routers.dashboard.service=api@internal
+    networks:
+    - mcp-network
+    ports:
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:8080:8080"
+    restart: unless-stopped
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    - ./traefik.yml:/etc/traefik/traefik.yml:ro
+volumes:
+  docker-socket:
+    external: true
+  mcp-cache:
+    driver: local
+  mcp-data:
+    driver: local
+    driver_opts:
+      device: ${PWD}/data
+      o: bind
+      type: none
+  mcp-logs:
+    driver: local

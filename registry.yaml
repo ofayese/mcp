@@ -1,0 +1,49 @@
+registry:
+  # Core tools that don't require tokens
+  filesystem:
+    ref: "mcp/filesystem:latest"
+  docker:
+    ref: "mcp/docker:latest"
+  time:
+    ref: "mcp/time:latest"
+  fetch:
+    ref: "mcp/fetch:latest"
+  
+  # Tools with optional tokens (will work without them but with limited functionality)
+  kubernetes:
+    ref: "mcp/kubernetes:latest"
+  playwright:
+    ref: "mcp/playwright:latest"
+  puppeteer:
+    ref: "mcp/puppeteer:latest"
+  node-code-sandbox:
+    ref: "mcp/node-code-sandbox:latest"
+  desktop-commander:
+    ref: "mcp/desktop-commander:latest"
+  wikipedia-mcp:
+    ref: "mcp/wikipedia-mcp:latest"
+
+  github:
+    ref: "mcp/github:latest"
+  github-chat:
+    ref: "mcp/github-chat:latest"
+  github-official:
+    ref: "mcp/github-mcp-server:latest"
+  gitlab:
+    ref: "mcp/gitlab:latest"
+  sentry:
+    ref: "mcp/sentry:latest"
+  azure:
+    ref: "mcp/azure:latest"
+  jetbrains:
+    ref: "mcp/jetbrains:latest"
+  pulumi:
+    ref: "mcp/pulumi:latest"
+  openapi-schema:
+    ref: "mcp/openapi-schema:latest"
+  atlas-docs:
+    ref: "mcp/atlas-docs:latest"
+  databutton:
+    ref: "mcp/databutton:latest"
+  context7:
+    ref: "mcp/context7:latest"

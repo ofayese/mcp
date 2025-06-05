@@ -1,0 +1,33 @@
+# MCP Docker .gitignore
+# Sensitive files
+.env
+secrets.yaml
+*.key
+*.pem
+*.crt
+
+# Logs
+logs/
+*.log
+
+# Cache and temporary files
+cache/
+tmp/
+temp/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+volumes/
+
+# Backup files
+*.backup
+*.bak

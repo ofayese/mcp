@@ -1,0 +1,75 @@
+# MCP Configuration - Production Ready
+# Environment: production
+# Version: 1.0
+
+# Application settings
+app:
+  name: "dhv01mcp"
+  version: "1.0.0"
+  environment: "dev"
+
+server:
+  host: "0.0.0.0"
+  port: 8811
+  timeout: 30s
+  max_connections: 100
+
+logging:
+  level: "info"
+  format: "json"
+  output: "stdout"
+  rotation:
+    enabled: true
+    max_size: "100MB"
+    max_files: 5
+
+monitoring:
+  enabled: true
+  metrics_endpoint: "/metrics"
+  health_endpoint: "/health"
+  prometheus:
+    enabled: true
+    port: 9090
+
+filesystem:
+  paths: []
+  max_file_size: "10000MB"
+  allowed_extensions: [".txt", ".json", ".yaml", ".yml", ".md", ".py", ".js", ".ts"]
+
+git:
+  paths:
+    - rootfs
+  max_repo_size: "10GB"
+
+jetbrains:
+  port: 0
+  auto_detect: true
+
+docker:
+  socket_path: "/var/run/docker.sock"
+  api_version: "1.41"
+  timeout: "30s"
+  max_containers: 50
+
+resources:
+  memory_limit: "512MB"
+  cpu_limit: "1.0"
+  disk_space_limit: "25GB"
+
+cache:
+  enabled: true
+  type: "memory"
+  ttl: "1h"
+  max_size: "100MB"
+
+secrets_file: 'c:\Users\ofayese\.docker\mcp\secrets.yaml'
+
+features:
+  experimental_features: true
+  debug_mode: false
+  verbose_logging: false
+  enabled: true
+  type: "memory"
+  ttl: "1h"
+  max_size: "100MB"
+
