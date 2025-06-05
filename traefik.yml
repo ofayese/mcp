@@ -4,13 +4,13 @@ api:
 
 entryPoints:
   web:
-    address: ":80"
+    address: "0:8811"
   websecure:
-    address: ":443"
+    address: "0:443"
 
 providers:
   docker:
-    endpoint: "unix:///var/run/docker.sock"
+    endpoint: "${TRAEFIK_DOCKER_ENDPOINT:-npipe:////./pipe/docker_engine}"
     exposedByDefault: false
     network: mcp-network
 
