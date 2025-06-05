@@ -6,19 +6,18 @@ Requires=docker.service
 Wants=network-online.target
 
 [Service]
-Type=oneshot
+Type=simple
 WorkingDirectory=/home/ofayese/.docker/mcp
 # Check which compose command is available
 ExecStartPre=/bin/sh -c 'if command -v docker-compose >/dev/null 2>&1; then echo "Using docker-compose"; elif command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then echo "Using docker compose plugin"; else echo "No Docker Compose available" >&2; exit 1; fi'
 # Start services with the available compose command
-ExecStart=/bin/sh -c 'if command -v docker-compose >/dev/null 2>&1; then docker-compose up -d; else docker compose up -d; fi'
+ExecStart=/bin/sh -c 'if command -v docker-compose >/dev/null 2>&1; then docker-compose up; else docker compose up; fi'
 # Stop services with the available compose command
 ExecStop=/bin/sh -c 'if command -v docker-compose >/dev/null 2>&1; then docker-compose down; else docker compose down; fi'
 # Ensure health check passes
 ExecStartPost=/bin/sh -c 'for i in $(seq 1 30); do if curl -s -f http://localhost:8811/health >/dev/null; then exit 0; fi; echo "Waiting for MCP to start..."; sleep 2; done; echo "MCP failed to start within timeout" >&2; exit 1'
 
 # Security and resource configuration
-RemainAfterExit=yes
 TimeoutStartSec=180
 TimeoutStopSec=60
 Restart=on-failure
@@ -33,4 +32,5 @@ NoNewPrivileges=true
 PrivateTmp=true
 
 [Install]
+WantedBy=multi-user.target
 WantedBy=multi-user.target
