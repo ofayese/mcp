@@ -1,33 +1,27 @@
-# MCP Docker .gitignore
-# Sensitive files
-.env
+# Secrets and configuration
 secrets.yaml
-*.key
-*.pem
-*.crt
+registry.yaml
+config.yaml
+.env
+*.ps1
+*.sh
 
-# Logs
-logs/
-*.log
-
-# Cache and temporary files
+# Docker-related
+data/
 cache/
-tmp/
-temp/
+logs/
+init-db/
+secrets/
+docker-compose.override.yml
 
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS files
+# Ignore system files
 .DS_Store
 Thumbs.db
 
-# Docker volumes
-volumes/
+# Ignore Docker volumes (named volumes not affected)
+*/.docker/
 
-# Backup files
-*.backup
-*.bak
+# Python, Node, or language-specific (optional)
+__pycache__/
+*.pyc
+node_modules/
