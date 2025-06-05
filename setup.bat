@@ -1,13 +1,57 @@
 @echo off
-:: MCP Secure Setup Script for Windows
+:: MCP Unified Setup Script for Windows
 :: Updated: June 2025
+:: Combines functionality of setup.bat and quick-setup.bat
 setlocal enabledelayedexpansion
 
 :: Set console code page to UTF-8 for emoji support
 chcp 65001 > nul 2>&1
 
-:: Set title
-title MCP Secure Setup
+:: Parse command line arguments
+set "QUICK_MODE=false"
+set "SKIP_CHECKS=false"
+
+:parse_args
+if "%~1"=="" goto :end_parse_args
+if /i "%~1"=="-q" set "QUICK_MODE=true" & goto :next_arg
+if /i "%~1"=="--quick" set "QUICK_MODE=true" & goto :next_arg
+if /i "%~1"=="-y" set "SKIP_CHECKS=true" & goto :next_arg
+if /i "%~1"=="--yes" set "SKIP_CHECKS=true" & goto :next_arg
+if /i "%~1"=="-h" goto :show_help
+if /i "%~1"=="--help" goto :show_help
+echo Unknown parameter: %~1
+goto :show_help
+
+:next_arg
+shift
+goto :parse_args
+
+:show_help
+echo.
+echo MCP Setup Script - Usage:
+echo setup.bat [options]
+echo.
+echo Options:
+echo   -q, --quick    Quick setup mode (skips some confirmations)
+echo   -y, --yes      Skip all confirmations and checks
+echo   -h, --help     Show this help message
+echo.
+exit /b 0
+
+:end_parse_args
+
+:: Set title based on mode
+if "%QUICK_MODE%"=="true" (
+    title MCP Quick Setup
+) else (
+    title MCP Secure Setup
+)
+
+:: Clear screen
+cls
+
+:: Get start time
+set START_TIME=%TIME%
 
 :: Script constants
 set "REQUIRED_DIRS=data logs cache init-db secrets"
@@ -19,10 +63,17 @@ set "HEALTH_CHECK_TIMEOUT=30"
 
 :: Header
 echo.
-echo ┌─────────────────────────────────────┐
-echo │  MCP Secure Setup - Windows         │
-echo │  %DATE% %TIME:~0,8%                 │
-echo └─────────────────────────────────────┘
+if "%QUICK_MODE%"=="true" (
+    echo ┌─────────────────────────────────────┐
+    echo │  MCP Quick Setup - Windows          │
+    echo │  %DATE% %TIME:~0,8%                 │
+    echo └─────────────────────────────────────┘
+) else (
+    echo ┌─────────────────────────────────────┐
+    echo │  MCP Secure Setup - Windows         │
+    echo │  %DATE% %TIME:~0,8%                 │
+    echo └─────────────────────────────────────┘
+)
 echo.
 
 :: Functions
@@ -51,6 +102,39 @@ if errorlevel 1 (
     call :log SUCCESS "Docker is running"
 )
 
+:: Verify Docker Compose is available
+where docker-compose > nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo [INFO] Checking for Docker Compose plugin...
+    docker compose version > nul 2>&1
+    if %ERRORLEVEL% NEQ 0 (
+        echo [WARNING] Neither docker-compose nor Docker Compose plugin found.
+        echo [WARNING] MCP setup may fail if Docker Compose is not available.
+    ) else (
+        echo [INFO] Docker Compose plugin is available.
+    )
+) else (
+    echo [SUCCESS] docker-compose is available.
+)
+
+:: Prompt for confirmation in full mode
+if "%QUICK_MODE%"=="false" (
+    if "%SKIP_CHECKS%"=="false" (
+        echo.
+        echo This script will:
+        echo  • Set up Docker volumes and networks
+        echo  • Create required directories with secure permissions
+        echo  • Configure environment variables
+        echo  • Start MCP containers
+        echo.
+        set /p CONFIRM="Continue with setup? [Y/n]: "
+        if /i "!CONFIRM!"=="n" (
+            echo Setup cancelled by user.
+            exit /b 0
+        )
+    )
+)
+
 :: Load .env file into environment
 if exist ".env" (
     call :log INFO "Loading environment variables from .env"
@@ -63,6 +147,27 @@ if exist ".env" (
     call :log SUCCESS "Loaded %ENV_COUNT% environment variables"
 ) else (
     call :log WARNING "'.env' file not found, using default values"
+)
+
+:: Check required environment variables
+call :log INFO "Checking required environment variables..."
+set "MISSING_VARS="
+set "REQUIRED_VARS=COMPOSE_PROJECT_NAME COMPOSE_FILE MCP_HOST MCP_PORT MCP_NETWORK MCP_SUBNET MCP_DATA_DIR MCP_CACHE_DIR MCP_CONFIG_PATH MCP_SECRETS_PATH MCP_REGISTRY_PATH POSTGRES_DB POSTGRES_USER POSTGRES_PASSWORD REDIS_PASSWORD"
+
+for %%v in (%REQUIRED_VARS%) do (
+    if not defined %%v (
+        set "MISSING_VARS=!MISSING_VARS! %%v"
+    )
+)
+
+if defined MISSING_VARS (
+    call :log ERROR "Missing required environment variables: %MISSING_VARS%"
+    if "%SKIP_CHECKS%"=="false" (
+        call :log ERROR "Please check your .env file and try again."
+        exit /b 1
+    ) else (
+        call :log WARNING "Continuing despite missing variables because --yes was specified."
+    )
 )
 
 :: Create required folders with improved security
@@ -126,7 +231,7 @@ if not exist "secrets" (
 
 :: GitHub token
 if defined GITHUB_TOKEN (
-    echo %GITHUB_TOKEN%> secrets\github_token
+    echo %GITHUB_TOKEN%> secrets\github.personal_access_token
     call :log SUCCESS "Created GitHub token file"
 )
 
@@ -138,13 +243,13 @@ if defined GITHUB_PAT (
 
 :: GitLab token
 if defined GITLAB_TOKEN (
-    echo %GITLAB_TOKEN%> secrets\gitlab_token
+    echo %GITLAB_TOKEN%> secrets\gitlab.personal_access_token
     call :log SUCCESS "Created GitLab token file"
 )
 
 :: Sentry token
 if defined SENTRY_TOKEN (
-    echo %SENTRY_TOKEN%> secrets\sentry_token
+    echo %SENTRY_TOKEN%> secrets\sentry.auth_token
     call :log SUCCESS "Created Sentry token file"
 )
 
@@ -154,73 +259,50 @@ if defined GITHUB_CHAT_API_KEY (
     call :log SUCCESS "Created GitHub Chat API key file"
 )
 
+:: PostgreSQL password
+if defined POSTGRES_PASSWORD (
+    echo %POSTGRES_PASSWORD%> secrets\postgres_password.txt
+    call :log SUCCESS "Created PostgreSQL password file"
+)
+
 call :log INFO "Secrets setup complete"
 
-:: Check Docker Compose availability
-where docker-compose >nul 2>&1
-if errorlevel 1 (
-    call :log INFO "Checking for Docker Compose plugin..."
-    docker compose version >nul 2>&1
-    if errorlevel 1 (
-        call :log WARNING "Neither docker-compose nor Docker Compose plugin found."
-        call :log WARNING "MCP setup may fail if Docker Compose is not available."
-        set COMPOSE_CMD=docker compose
-    ) else (
-        call :log INFO "Docker Compose plugin is available."
-        set COMPOSE_CMD=docker compose
-    )
-) else (
-    call :log SUCCESS "docker-compose is available."
-    set COMPOSE_CMD=docker-compose
-)
-
-:: Start Docker Compose
-call :log INFO "Starting MCP stack with %COMPOSE_CMD%..."
-%COMPOSE_CMD% up -d
-
-:: Wait and check health
-call :log INFO "Waiting for services to initialize (%HEALTH_CHECK_TIMEOUT%s timeout)..."
-
-set start_time=%time%
-set healthy=false
-
-:health_check_loop
-for /f "tokens=1-4 delims=:.," %%a in ("%time%") do (
-    set /a current=((1%%a %% 100)*3600 + (1%%b %% 100)*60 + (1%%c %% 100))*100 + (1%%d %% 100)
-)
-for /f "tokens=1-4 delims=:.," %%a in ("%start_time%") do (
-    set /a start=((1%%a %% 100)*3600 + (1%%b %% 100)*60 + (1%%c %% 100))*100 + (1%%d %% 100)
-)
-set /a elapsed=(current-start)/100
-if %elapsed% gtr %HEALTH_CHECK_TIMEOUT% goto :health_check_done
-
-:: Check health
-curl -s -f %HEALTH_CHECK_URL% >nul 2>&1
-if errorlevel 1 (
-    echo . 
-    timeout /t 2 >nul
-    goto :health_check_loop
-) else (
-    set healthy=true
-    goto :health_check_done
-)
-
-:health_check_done
+:: Run the PowerShell configuration script
 echo.
-if "%healthy%"=="true" (
-    call :log SUCCESS "MCP is healthy! (Time: %elapsed%s)"
+call :log INFO "Running MCP configuration..."
+if "%QUICK_MODE%"=="true" (
+    call :log INFO "Using quick mode - this might take a few minutes. Please wait..."
 ) else (
-    call :log WARNING "MCP health check timed out after %elapsed%s"
-    call :log INFO "Run 'health-check.bat' to troubleshoot or check container logs"
+    call :log INFO "Using secure mode - this might take several minutes. Please wait..."
 )
+echo.
 
-:: Show container status
-call :log INFO "MCP container status:"
-docker ps --filter "name=mcp" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+powershell -ExecutionPolicy Bypass -File mcpconfig.ps1
+
+:: Calculate configuration duration
+for /F "tokens=1-4 delims=:.," %%a in ("%START_TIME%") do (
+  set /A "start=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
+)
+for /F "tokens=1-4 delims=:.," %%a in ("%TIME%") do (
+  set /A "end=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
+)
+set /A elapsed=end-start
+set /A hh=elapsed/(60*60*100), rest=elapsed%%(60*60*100), mm=rest/(60*100), rest%%=60*100, ss=rest/100
+if %hh% lss 10 set hh=0%hh%
+if %mm% lss 10 set mm=0%mm%
+if %ss% lss 10 set ss=0%ss%
+
+:: Run detailed health check
+echo.
+call :log INFO "Running detailed health check..."
+echo.
+
+call health-check.bat
 
 echo.
 echo ┌─────────────────────────────────────┐
 echo │  MCP Setup Complete                 │
+echo │  Time: %hh%:%mm%:%ss%                      │
 echo └─────────────────────────────────────┘
 echo.
 echo Access Points:
@@ -229,3 +311,8 @@ echo  • Traefik Dashboard: http://localhost:8080
 echo.
 echo For troubleshooting, use: 'docker logs mcp-server'
 echo.
+
+if "%QUICK_MODE%"=="false" (
+    echo Press any key to exit...
+    pause > nul
+)

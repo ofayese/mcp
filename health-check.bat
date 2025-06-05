@@ -3,11 +3,26 @@
 :: Updated: June 2025
 setlocal enabledelayedexpansion
 
-:: Configuration
-set "MCP_HOST=%MCP_HOST%"
+:: Required environment variables
+set "REQUIRED_VARS=MCP_HOST MCP_PORT"
+
+:: Load .env file if it exists
+if exist ".env" (
+    echo [INFO] Loading environment variables from .env
+    set ENV_COUNT=0
+    
+    for /f "usebackq tokens=1,2 delims==" %%a in (`findstr /v "^#\|^$" .env`) do (
+        set "%%a=%%b"
+        set /a ENV_COUNT+=1
+    )
+    echo [INFO] Loaded %ENV_COUNT% environment variables
+)
+
+:: Set default values for missing variables
 if "%MCP_HOST%"=="" set "MCP_HOST=localhost"
-set "MCP_PORT=%MCP_PORT%"
 if "%MCP_PORT%"=="" set "MCP_PORT=8811"
+
+:: Configuration
 set "HEALTH_URL=http://%MCP_HOST%:%MCP_PORT%/health"
 set "TOOLS_URL=http://%MCP_HOST%:%MCP_PORT%/tools"
 set "METRICS_URL=http://%MCP_HOST%:%MCP_PORT%/metrics"

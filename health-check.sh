@@ -5,6 +5,40 @@
 # Exit on error, undefined variables, and pipe failures
 set -euo pipefail
 
+# Required environment variables
+REQUIRED_VARS=("MCP_HOST" "MCP_PORT")
+
+# Load .env file if it exists
+if [[ -f .env ]]; then
+  echo "[INFO] Loading environment variables from .env"
+  ENV_COUNT=0
+  
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    # Skip comments and empty lines
+    [[ "$line" =~ ^[[:space:]]*# ]] && continue
+    [[ -z "$line" ]] && continue
+    
+    # Export variable if it contains =
+    if [[ "$line" =~ ^([^=]+)=(.*)$ ]]; then
+      # Extract name and value, trim whitespace
+      name="${BASH_REMATCH[1]}"
+      name="$(echo "$name" | xargs)"
+      
+      value="${BASH_REMATCH[2]}"
+      # Remove trailing comments if any
+      if [[ "$value" =~ ^([^#]+)# ]]; then
+        value="${BASH_REMATCH[1]}"
+      fi
+      value="$(echo "$value" | xargs)"
+      
+      export "$name=$value"
+      ENV_COUNT=$((ENV_COUNT + 1))
+    fi
+  done < .env
+  
+  echo "[INFO] Loaded $ENV_COUNT environment variables"
+fi
+
 # Configuration with defaults
 MCP_HOST="${MCP_HOST:-localhost}"
 MCP_PORT="${MCP_PORT:-8811}"

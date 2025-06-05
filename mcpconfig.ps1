@@ -134,6 +134,45 @@ try {
     exit 1
 }
 
+# Function to check if required environment variables are set
+function Check-EnvVars {
+    Write-LogMessage "🔍 Checking required environment variables..." -Type "INFO"
+    $required = @(
+        "COMPOSE_PROJECT_NAME",
+        "COMPOSE_FILE",
+        "MCP_HOST",
+        "MCP_PORT",
+        "MCP_NETWORK",
+        "MCP_SUBNET",
+        "MCP_DATA_DIR",
+        "MCP_CACHE_DIR",
+        "MCP_CONFIG_PATH",
+        "MCP_SECRETS_PATH",
+        "MCP_REGISTRY_PATH",
+        "POSTGRES_DB",
+        "POSTGRES_USER",
+        "POSTGRES_PASSWORD",
+        "REDIS_PASSWORD"
+    )
+    
+    $missing = @()
+    foreach ($var in $required) {
+        if ([string]::IsNullOrEmpty([Environment]::GetEnvironmentVariable($var))) {
+            $missing += $var
+        }
+    }
+    
+    if ($missing.Count -gt 0) {
+        Write-LogMessage "❌ Missing required environment variables:" -Type "ERROR"
+        foreach ($var in $missing) {
+            Write-LogMessage "   - $var" -Type "ERROR"
+        }
+        throw "Missing required environment variables. Please check your .env file."
+    }
+    
+    Write-LogMessage "✅ All required environment variables present." -Type "SUCCESS"
+}
+
 # Load .env file into environment
 $envFile = ".\.env"
 if (Test-Path $envFile) {
@@ -145,13 +184,51 @@ if (Test-Path $envFile) {
         if ($_ -match "^\s*$") { return }
         $parts = $_ -split '=', 2
         if ($parts.Length -eq 2) {
-            [System.Environment]::SetEnvironmentVariable($parts[0], $parts[1])
+            # Extract the variable name and value, trim any whitespace
+            $name = $parts[0].Trim()
+            $value = $parts[1].Trim()
+            
+            # Remove any trailing comment from the value
+            if ($value -match "^([^#]+)#") {
+                $value = $Matches[1].Trim()
+            }
+            
+            [System.Environment]::SetEnvironmentVariable($name, $value)
             $envCount++
         }
     }
     Write-LogMessage "Loaded $envCount environment variables" -Type "SUCCESS"
+    
+    # Validate required environment variables
+    Check-EnvVars
 } else {
     Write-LogMessage ".env file not found. Using default values." -Type "WARNING"
+    
+    # Set default values for required variables
+    $defaults = @{
+        "COMPOSE_PROJECT_NAME" = "mcp"
+        "COMPOSE_FILE" = "docker-compose.yml"
+        "MCP_HOST" = "0.0.0.0"
+        "MCP_PORT" = "8811"
+        "MCP_NETWORK" = "mcp-network"
+        "MCP_SUBNET" = "172.40.1.0/24"
+        "MCP_DATA_DIR" = "./data"
+        "MCP_CACHE_DIR" = "./cache"
+        "MCP_CONFIG_PATH" = "$PSScriptRoot\config.yaml"
+        "MCP_SECRETS_PATH" = "$PSScriptRoot\secrets"
+        "MCP_REGISTRY_PATH" = "$PSScriptRoot\registry.yaml"
+        "POSTGRES_DB" = "mcp"
+        "POSTGRES_USER" = "mcp"
+        "POSTGRES_PASSWORD" = "mcp_password"
+        "REDIS_PASSWORD" = "mcp"
+    }
+    
+    foreach ($key in $defaults.Keys) {
+        if ([string]::IsNullOrEmpty([Environment]::GetEnvironmentVariable($key))) {
+            [System.Environment]::SetEnvironmentVariable($key, $defaults[$key])
+            Write-LogMessage "Set default for $key = $($defaults[$key])" -Type "INFO"
+        }
+    }
 }
 
 # Ensure directories exist with proper permissions

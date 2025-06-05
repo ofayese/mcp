@@ -1,13 +1,53 @@
 #!/usr/bin/env bash
-# MCP Secure Setup Script for Linux/macOS
+# MCP Unified Setup Script for Linux/macOS
 # Updated: June 2025
+# Combines functionality of setup.sh and mcpconfig.sh
 # Cross-platform (Linux, macOS, WSL)
 
 # Exit on error, undefined variables, and pipe failures
 set -euo pipefail
 
+# Parse command line arguments
+QUICK_MODE=false
+SKIP_CHECKS=false
+
+function show_help {
+  echo ""
+  echo "MCP Setup Script - Usage:"
+  echo "setup.sh [options]"
+  echo ""
+  echo "Options:"
+  echo "  -q, --quick    Quick setup mode (skips some confirmations)"
+  echo "  -y, --yes      Skip all confirmations and checks"
+  echo "  -h, --help     Show this help message"
+  echo ""
+  exit 0
+}
+
+# Process command line arguments
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -q|--quick)
+      QUICK_MODE=true
+      shift
+      ;;
+    -y|--yes)
+      SKIP_CHECKS=true
+      shift
+      ;;
+    -h|--help)
+      show_help
+      ;;
+    *)
+      echo "Unknown parameter: $1"
+      show_help
+      ;;
+  esac
+done
+
 # Script constants
 SCRIPT_VERSION="1.2.0"
+MIN_DOCKER_VERSION="20.10.0"
 REQUIRED_DIRS=("data" "logs" "cache" "init-db" "secrets")
 REQUIRED_VOLUMES=("mcp-data" "mcp-logs" "mcp-cache")
 HEALTH_CHECK_URL="http://localhost:8811/health"
@@ -61,6 +101,48 @@ command_exists() {
   command -v "$1" >/dev/null 2>&1
 }
 
+compare_versions() {
+  local version1=$1
+  local version2=$2
+  
+  # Remove any non-numeric prefix/suffix
+  version1=$(echo "$version1" | sed -E 's/[^0-9.].*$//')
+  version2=$(echo "$version2" | sed -E 's/[^0-9.].*$//')
+  
+  if [[ "$version1" == "$version2" ]]; then
+    return 0
+  fi
+  
+  local IFS=.
+  local i ver1=($version1) ver2=($version2)
+  
+  # Fill empty fields with zeros
+  for ((i=${#ver1[@]}; i<${#ver2[@]}; i++)); do
+    ver1[i]=0
+  done
+  for ((i=${#ver2[@]}; i<${#ver1[@]}; i++)); do
+    ver2[i]=0
+  done
+  
+  # Compare version numbers
+  for ((i=0; i<${#ver1[@]}; i++)); do
+    if [[ -z ${ver2[i]} ]]; then
+      # If ver2 is shorter, and ver1 still has elements, ver1 is greater
+      return 1
+    fi
+    
+    if ((10#${ver1[i]} > 10#${ver2[i]})); then
+      return 1
+    fi
+    
+    if ((10#${ver1[i]} < 10#${ver2[i]})); then
+      return 2
+    fi
+  done
+  
+  return 0
+}
+
 create_secure_directory() {
   local dir=$1
   
@@ -76,11 +158,64 @@ create_secure_directory() {
   fi
 }
 
+check_env_vars() {
+  log_message "🔍 Checking required environment variables..." "INFO"
+  required=(
+    "COMPOSE_PROJECT_NAME"
+    "COMPOSE_FILE"
+    "MCP_HOST"
+    "MCP_PORT"
+    "MCP_NETWORK"
+    "MCP_SUBNET"
+    "MCP_DATA_DIR"
+    "MCP_CACHE_DIR"
+    "MCP_CONFIG_PATH"
+    "MCP_SECRETS_PATH"
+    "MCP_REGISTRY_PATH"
+    "POSTGRES_DB"
+    "POSTGRES_USER"
+    "POSTGRES_PASSWORD"
+    "REDIS_PASSWORD"
+  )
+  
+  missing=()
+  for var in "${required[@]}"; do
+    if [[ -z "${!var-}" ]]; then
+      missing+=("$var")
+    fi
+  done
+  
+  if [[ ${#missing[@]} -gt 0 ]]; then
+    log_message "❌ Missing required environment variables:" "ERROR"
+    for var in "${missing[@]}"; do
+      log_message "   - $var" "ERROR"
+    done
+    
+    if [[ "$SKIP_CHECKS" == "false" ]]; then
+      echo "Missing required environment variables. Please check your .env file."
+      return 1
+    else
+      log_message "Continuing despite missing variables because --yes was specified." "WARNING"
+    fi
+  else
+    log_message "✅ All required environment variables present." "SUCCESS"
+  fi
+  
+  return 0
+}
+
 # Print header
-echo -e "\n${CYAN}${BOLD}┌─────────────────────────────────────────┐${NC}"
-echo -e "${CYAN}${BOLD}│ MCP Secure Setup v${SCRIPT_VERSION}             │${NC}"
-echo -e "${CYAN}${BOLD}│ $(date "+%Y-%m-%d %H:%M:%S")                 │${NC}"
-echo -e "${CYAN}${BOLD}└─────────────────────────────────────────┘${NC}\n"
+if [[ "$QUICK_MODE" == "true" ]]; then
+  echo -e "\n${CYAN}${BOLD}┌─────────────────────────────────────────┐${NC}"
+  echo -e "${CYAN}${BOLD}│ MCP Quick Setup v${SCRIPT_VERSION}              │${NC}"
+  echo -e "${CYAN}${BOLD}│ $(date "+%Y-%m-%d %H:%M:%S")                 │${NC}"
+  echo -e "${CYAN}${BOLD}└─────────────────────────────────────────┘${NC}\n"
+else
+  echo -e "\n${CYAN}${BOLD}┌─────────────────────────────────────────┐${NC}"
+  echo -e "${CYAN}${BOLD}│ MCP Secure Setup v${SCRIPT_VERSION}             │${NC}"
+  echo -e "${CYAN}${BOLD}│ $(date "+%Y-%m-%d %H:%M:%S")                 │${NC}"
+  echo -e "${CYAN}${BOLD}└─────────────────────────────────────────┘${NC}\n"
+fi
 
 # Check for Bash version
 BASH_VERSION_MAJOR=${BASH_VERSION%%.*}
@@ -102,6 +237,31 @@ if ! docker info > /dev/null 2>&1; then
 else
   DOCKER_VERSION=$(docker version --format "{{.Server.Version}}" 2>/dev/null || docker version | grep -E 'Server:.*version' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
   log_message "Docker is available (v$DOCKER_VERSION)" "SUCCESS"
+  
+  # Check minimum Docker version
+  compare_versions "$DOCKER_VERSION" "$MIN_DOCKER_VERSION"
+  VERSION_COMPARE=$?
+  
+  if [[ $VERSION_COMPARE -eq 2 ]]; then
+    log_message "Docker version $DOCKER_VERSION is below minimum required version $MIN_DOCKER_VERSION" "WARNING"
+    log_message "Some features may not work correctly. Consider upgrading Docker." "WARNING"
+  fi
+fi
+
+# Prompt for confirmation in full mode
+if [[ "$QUICK_MODE" == "false" && "$SKIP_CHECKS" == "false" ]]; then
+  echo ""
+  echo "This script will:"
+  echo " • Set up Docker volumes and networks"
+  echo " • Create required directories with secure permissions"
+  echo " • Configure environment variables"
+  echo " • Start MCP containers"
+  echo ""
+  read -p "Continue with setup? [Y/n]: " CONFIRM
+  if [[ "$CONFIRM" == "n" || "$CONFIRM" == "N" ]]; then
+    echo "Setup cancelled by user."
+    exit 0
+  fi
 fi
 
 # Load .env file if it exists
@@ -116,18 +276,110 @@ if [[ -f .env ]]; then
     
     # Export variable if it contains =
     if [[ "$line" =~ ^([^=]+)=(.*)$ ]]; then
-      export "${BASH_REMATCH[1]}=${BASH_REMATCH[2]}"
+      # Extract name and value, trim whitespace
+      name="${BASH_REMATCH[1]}"
+      name="$(echo "$name" | xargs)"
+      
+      value="${BASH_REMATCH[2]}"
+      # Remove trailing comments if any
+      if [[ "$value" =~ ^([^#]+)# ]]; then
+        value="${BASH_REMATCH[1]}"
+      fi
+      value="$(echo "$value" | xargs)"
+      
+      export "$name=$value"
       ENV_COUNT=$((ENV_COUNT + 1))
     fi
   done < .env
   
   log_message "Loaded $ENV_COUNT environment variables" "SUCCESS"
+  
+  # Validate required environment variables
+  check_env_vars || exit 1
 else
   log_message ".env file not found. Using default values." "WARNING"
-  # Set defaults for required variables
-  export MCP_NETWORK=${MCP_NETWORK:-mcp-network}
-  export MCP_SUBNET=${MCP_SUBNET:-172.40.1.0/24}
+  
+  # Set default values for required variables
+  declare -A defaults
+  defaults=(
+    ["COMPOSE_PROJECT_NAME"]="mcp"
+    ["COMPOSE_FILE"]="docker-compose.yml"
+    ["MCP_HOST"]="0.0.0.0"
+    ["MCP_PORT"]="8811"
+    ["MCP_NETWORK"]="mcp-network"
+    ["MCP_SUBNET"]="172.40.1.0/24"
+    ["MCP_DATA_DIR"]="./data"
+    ["MCP_CACHE_DIR"]="./cache"
+    ["MCP_CONFIG_PATH"]="$(pwd)/config.yaml"
+    ["MCP_SECRETS_PATH"]="$(pwd)/secrets"
+    ["MCP_REGISTRY_PATH"]="$(pwd)/registry.yaml"
+    ["POSTGRES_DB"]="mcp"
+    ["POSTGRES_USER"]="mcp"
+    ["POSTGRES_PASSWORD"]="mcp_password"
+    ["REDIS_PASSWORD"]="mcp"
+  )
+  
+  for key in "${!defaults[@]}"; do
+    if [[ -z "${!key-}" ]]; then
+      export "$key=${defaults[$key]}"
+      log_message "Set default for $key = ${defaults[$key]}" "INFO"
+    fi
+  done
 fi
+
+# Set up secrets from environment variables
+log_message "Setting up secrets..." "INFO"
+
+# Create secrets directory if it doesn't exist
+if [[ ! -d "secrets" ]]; then
+  mkdir -p "secrets"
+  chmod 700 "secrets"
+  log_message "Created and secured secrets directory" "SUCCESS"
+fi
+
+# GitHub token
+if [[ -n "${GITHUB_TOKEN-}" ]]; then
+  echo "$GITHUB_TOKEN" > "secrets/github.personal_access_token"
+  chmod 600 "secrets/github.personal_access_token"
+  log_message "Created GitHub token file" "SUCCESS"
+fi
+
+# GitHub Personal Access Token
+if [[ -n "${GITHUB_PAT-}" ]]; then
+  echo "$GITHUB_PAT" > "secrets/github.personal_access_token"
+  chmod 600 "secrets/github.personal_access_token"
+  log_message "Created GitHub PAT file" "SUCCESS"
+fi
+
+# GitLab token
+if [[ -n "${GITLAB_TOKEN-}" ]]; then
+  echo "$GITLAB_TOKEN" > "secrets/gitlab.personal_access_token"
+  chmod 600 "secrets/gitlab.personal_access_token"
+  log_message "Created GitLab token file" "SUCCESS"
+fi
+
+# Sentry token
+if [[ -n "${SENTRY_TOKEN-}" ]]; then
+  echo "$SENTRY_TOKEN" > "secrets/sentry.auth_token"
+  chmod 600 "secrets/sentry.auth_token"
+  log_message "Created Sentry token file" "SUCCESS"
+fi
+
+# GitHub Chat API key
+if [[ -n "${GITHUB_CHAT_API_KEY-}" ]]; then
+  echo "$GITHUB_CHAT_API_KEY" > "secrets/github-chat.api_key"
+  chmod 600 "secrets/github-chat.api_key"
+  log_message "Created GitHub Chat API key file" "SUCCESS"
+fi
+
+# PostgreSQL password
+if [[ -n "${POSTGRES_PASSWORD-}" ]]; then
+  echo "$POSTGRES_PASSWORD" > "secrets/postgres_password.txt"
+  chmod 600 "secrets/postgres_password.txt"
+  log_message "Created PostgreSQL password file" "SUCCESS"
+fi
+
+log_message "Secrets setup complete" "SUCCESS"
 
 # Ensure directories exist with proper permissions
 log_message "Setting up directories..." "INFO"
@@ -163,53 +415,6 @@ else
   fi
 fi
 
-# Set up secrets from environment variables
-log_message "Setting up secrets..." "INFO"
-
-# Create secrets directory if it doesn't exist
-if [[ ! -d "secrets" ]]; then
-  mkdir -p "secrets"
-  chmod 700 "secrets"
-  log_message "Created and secured secrets directory" "SUCCESS"
-fi
-
-# GitHub token
-if [[ -n "${GITHUB_TOKEN:-}" ]]; then
-  echo "$GITHUB_TOKEN" > "secrets/github_token"
-  chmod 600 "secrets/github_token"
-  log_message "Created GitHub token file" "SUCCESS"
-fi
-
-# GitHub Personal Access Token
-if [[ -n "${GITHUB_PAT:-}" ]]; then
-  echo "$GITHUB_PAT" > "secrets/github.personal_access_token"
-  chmod 600 "secrets/github.personal_access_token"
-  log_message "Created GitHub PAT file" "SUCCESS"
-fi
-
-# GitLab token
-if [[ -n "${GITLAB_TOKEN:-}" ]]; then
-  echo "$GITLAB_TOKEN" > "secrets/gitlab_token"
-  chmod 600 "secrets/gitlab_token"
-  log_message "Created GitLab token file" "SUCCESS"
-fi
-
-# Sentry token
-if [[ -n "${SENTRY_TOKEN:-}" ]]; then
-  echo "$SENTRY_TOKEN" > "secrets/sentry.auth_token"
-  chmod 600 "secrets/sentry.auth_token"
-  log_message "Created Sentry token file" "SUCCESS"
-fi
-
-# GitHub Chat API key
-if [[ -n "${GITHUB_CHAT_API_KEY:-}" ]]; then
-  echo "$GITHUB_CHAT_API_KEY" > "secrets/github-chat.api_key"
-  chmod 600 "secrets/github-chat.api_key"
-  log_message "Created GitHub Chat API key file" "SUCCESS"
-fi
-
-log_message "Secrets setup complete" "SUCCESS"
-
 # Check for docker-compose availability
 if command_exists docker-compose; then
   COMPOSE_CMD="docker-compose"
@@ -222,8 +427,16 @@ else
   exit 1
 fi
 
+# Pull images before starting
+log_message "Pulling Docker images (this may take a few minutes)..." "INFO"
+if ! $COMPOSE_CMD pull > /dev/null 2>&1; then
+  log_message "Warning: Some images could not be pulled. Continuing with local images if available." "WARNING"
+else
+  log_message "Images pulled successfully" "SUCCESS"
+fi
+
 # Start Docker Compose
-log_message "Starting MCP stack with $COMPOSE_CMD..." "INFO"
+log_message "Starting services with Docker Compose..." "INFO"
 if $COMPOSE_CMD up -d; then
   log_message "Services started successfully" "SUCCESS"
 else
@@ -273,6 +486,14 @@ if [[ -n "$CONTAINERS" ]]; then
   done
 else
   log_message "Could not retrieve container status" "WARNING"
+fi
+
+# Run detailed health check
+log_message "Running detailed health check..." "INFO"
+if [[ -f "./health-check.sh" ]]; then
+  bash ./health-check.sh
+else
+  log_message "health-check.sh not found. Skipping detailed health check." "WARNING"
 fi
 
 # Script completion
