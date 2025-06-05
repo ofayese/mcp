@@ -6,7 +6,6 @@ registry:
     description: Official Notion MCP Server.
     title: Notion
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/notion@sha256:fc22efbe08aabde268e96013298712a0fa33348d93a907144e7231917561a2da
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/notion.md
@@ -44,9 +43,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 4967
+      pulls: 4785
       stars: 19
-      githubStars: 1991
+      githubStars: 1969
       category: productivity
       tags:
         - notion
@@ -57,7 +56,6 @@ registry:
     description: Interact with Slack Workspaces over the Slack API.
     title: Slack (Archived)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/slack@sha256:bc65ec0e4a475563a65b28752d2eef036a2de6d2b914a757a2d78005f6d04e0b
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/slack.md
@@ -99,7 +97,7 @@ registry:
     metadata:
       pulls: 60102
       stars: 13
-      githubStars: 51529
+      githubStars: 51156
       category: communication
       tags:
         - slack
@@ -110,7 +108,6 @@ registry:
     description: Tools for Atlassian products (Confluence and Jira). This integration supports both Atlassian Cloud and Jira Server/Data Center deployments.
     title: Atlassian
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/atlassian@sha256:88c397a87029f7f5d623766b79d37aa4e0043fc4fdd638a1da1592a0d4372737
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/atlassian.md
@@ -209,9 +206,9 @@ registry:
           - required:
               - jira
     metadata:
-      pulls: 5787
+      pulls: 5552
       stars: 11
-      githubStars: 1777
+      githubStars: 1754
       category: productivity
       tags:
         - atlassian
@@ -223,8 +220,7 @@ registry:
     description: Interact with Stripe services over the Stripe API.
     title: Stripe
     type: server
-    dateAdded: "2025-05-05T20:04:34Z"
-    image: mcp/stripe@sha256:485730299d8add4794fbeebf410722b93f2aa604cd0685bd00b7f242d132bf07
+    image: mcp/stripe@sha256:efa28f86445273be5d75df11d746ac8c9c07e6fee724bac1432e778351a99b40
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/stripe.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/stripe.json
@@ -261,9 +257,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1544
+      pulls: 1500
       stars: 6
-      githubStars: 814
+      githubStars: 812
       category: finance
       tags:
         - stripe
@@ -274,7 +270,6 @@ registry:
     description: Interact with your Elasticsearch indices through natural language conversations.
     title: Elasticsearch
     type: server
-    dateAdded: "2025-05-05T20:04:34Z"
     image: mcp/elasticsearch@sha256:a58f49874feca856bf18fb51574819b1ffc619ded4efd4ed2b0bcda406fb6ee8
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/elasticsearch.md
@@ -293,7 +288,7 @@ registry:
         example: your-api-key
     env:
       - name: ES_URL
-        value: '{{elasticsearch.url}}'
+        value: '{{elasticsearch.url|safe}}'
     prompts: 0
     resources: {}
     config:
@@ -306,9 +301,9 @@ registry:
         required:
           - url
     metadata:
-      pulls: 1549
+      pulls: 1494
       stars: 1
-      githubStars: 236
+      githubStars: 225
       category: search
       tags:
         - elasticsearch
@@ -319,7 +314,6 @@ registry:
     description: Heroku Platform MCP Server using the Heroku CLI.
     title: Heroku
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/heroku@sha256:031529ad71ae97f45fe10c4e420871b386991f44e1e012417df8e4e62fefa96b
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/heroku.md
@@ -369,7 +363,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1033
+      pulls: 1013
       stars: 2
       githubStars: 42
       category: devops
@@ -382,7 +376,6 @@ registry:
     description: Pulumi MCP Server.
     title: Pulumi
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/pulumi@sha256:d98a7a28d501d2c242f4e1e0745c04acb046571f27e0dbb21ae652c89f61fffc
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/pulumi.md
@@ -401,7 +394,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 879
+      pulls: 860
       stars: 3
       githubStars: 31
       category: devops
@@ -414,8 +407,7 @@ registry:
     description: MCP server for Grafana.
     title: Grafana
     type: server
-    dateAdded: "2025-05-05T20:04:34Z"
-    image: mcp/grafana@sha256:65c20bcc36a27fda102eec993024aeeee8f25a01e685267d144e40557f8d7f26
+    image: mcp/grafana@sha256:9d3340f7e05d1dee8defb80597dec893d5ccc222bffcdc8230ff282da2f71a45
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/grafana.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/grafana.json
@@ -464,7 +456,7 @@ registry:
         example: <your service account token>
     env:
       - name: GRAFANA_URL
-        value: '{{grafana.url}}'
+        value: '{{grafana.url|safe}}'
     command:
       - --transport=stdio
     prompts: 0
@@ -477,9 +469,9 @@ registry:
           url:
             type: string
     metadata:
-      pulls: 6563
+      pulls: 6124
       stars: 11
-      githubStars: 883
+      githubStars: 872
       category: monitoring
       tags:
         - grafana
@@ -490,7 +482,6 @@ registry:
     description: A Model Context Protocol (MCP) server for interacting with Kong Konnect APIs, allowing AI assistants to query and analyze Kong Gateway configurations, traffic, and analytics.
     title: Kong Konnect
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/kong@sha256:f38478ce8c37153ca5921375b02632d6387e8cd2484a644250634af9c56b070f
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/kong.md
@@ -526,7 +517,7 @@ registry:
           region:
             type: string
     metadata:
-      pulls: 728
+      pulls: 712
       githubStars: 29
       category: devops
       tags:
@@ -539,7 +530,6 @@ registry:
     description: Official GitHub MCP Server, by GitHub. Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
     title: GitHub Official
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/github-mcp-server@sha256:b4fe96e322c6634c853983b7da855c74a7b2b3a76ed97264680bd02f77c3a01a
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/github-official.md
@@ -606,9 +596,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 6199
+      pulls: 5986
       stars: 31
-      githubStars: 15001
+      githubStars: 14916
       category: devops
       tags:
         - github
@@ -619,7 +609,6 @@ registry:
     description: Git repository interaction and automation.
     title: Git (Reference)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/git@sha256:d80052dc41ad0f02d12fcd9263c1622375fb7f4ff09477d375767b7f9b3c0d4a
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/git.md
@@ -656,9 +645,9 @@ registry:
         required:
           - paths
     metadata:
-      pulls: 8378
+      pulls: 8221
       stars: 16
-      githubStars: 51529
+      githubStars: 51156
       category: devops
       tags:
         - gitl
@@ -669,7 +658,6 @@ registry:
     description: MCP Server for the GitLab API, enabling project management, file operations, and more.
     title: GitLab (Archived)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/gitlab@sha256:acd7bd5616b1611fd7a7a63328e1b7be34443df12c92940afe64e80a9d962c46
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/gitlab.md
@@ -693,7 +681,7 @@ registry:
         example: <YOUR_TOKEN>
     env:
       - name: GITLAB_API_URL
-        value: '{{gitlab.url}}'
+        value: '{{gitlab.url|safe}}'
     prompts: 0
     resources: {}
     config:
@@ -705,9 +693,9 @@ registry:
             type: string
             description: api url - optional for self-hosted instances
     metadata:
-      pulls: 7561
+      pulls: 7406
       stars: 10
-      githubStars: 51529
+      githubStars: 51156
       category: devops
       tags:
         - gitlab
@@ -718,7 +706,6 @@ registry:
     description: Connect with read-only access to PostgreSQL databases. This server enables LLMs to inspect database schemas and execute read-only queries.
     title: PostgreSQL readonly (Archived)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/postgres@sha256:db934d136f81d3baeb564ad99ec3ec7d893011801fcdf8028e7df3c8295da009
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/postgres.md
@@ -737,9 +724,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 22073
+      pulls: 21735
       stars: 15
-      githubStars: 51529
+      githubStars: 51156
       category: database
       tags:
         - postgres
@@ -750,7 +737,6 @@ registry:
     description: A Model Context Protocol server for retrieving and analyzing issues from Sentry.io. This server provides tools to inspect error reports, stacktraces, and other debugging information from your Sentry account.
     title: Sentry (Archived)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/sentry@sha256:3a4c3340250d242d8a29bd31b0c028f69bd3713c761474a7f804b38063a22794
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/sentry.md
@@ -770,9 +756,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1882
+      pulls: 1860
       stars: 3
-      githubStars: 51529
+      githubStars: 51156
       category: devops
       tags:
         - sentry
@@ -783,7 +769,6 @@ registry:
     description: MCP server for interacting with Neon Management API and databases.
     title: Neon
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/neon@sha256:a7d9856d23aac5570ec2cf5df3574798e8762875b27238318b71a035c511506d
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/neon.md
@@ -818,9 +803,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1198
+      pulls: 1184
       stars: 2
-      githubStars: 290
+      githubStars: 287
       category: database
       tags:
         - neon
@@ -831,7 +816,6 @@ registry:
     description: Browser automation and web scraping using Puppeteer.
     title: Puppeteer (Archived)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/puppeteer@sha256:c1e2bda6d92d400e900e497b743552a670a33631799c0a6478e91096e389bd27
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/puppeteer.md
@@ -853,9 +837,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 24136
+      pulls: 23831
       stars: 22
-      githubStars: 51529
+      githubStars: 51156
       category: devops
       tags:
         - puppeteer
@@ -866,7 +850,6 @@ registry:
     description: An MCP server for Astra DB workloads.
     title: Astra DB
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/astra-db@sha256:71746dcd55c3530bacc0680cea2b395d23e96e9c9f1a540e9fdebcfd0c806650
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/astra-db.md
@@ -897,7 +880,7 @@ registry:
         example: your_astra_db_token
     env:
       - name: ASTRA_DB_API_ENDPOINT
-        value: '{{astra-db.endpoint}}'
+        value: '{{astra-db.endpoint|safe}}'
     prompts: 0
     resources: {}
     config:
@@ -908,7 +891,7 @@ registry:
           endpoint:
             type: string
     metadata:
-      pulls: 1003
+      pulls: 993
       githubStars: 25
       category: database
       tags:
@@ -920,7 +903,6 @@ registry:
     description: MCP Server for Redis Cloud's API, allowing you to manage your Redis Cloud resources using natural language.
     title: Redis Cloud
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/redis-cloud@sha256:737c8243b59c7588ff1d54dafeea97f9657673c31c297cc3bb57156c8b81ff66
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/redis-cloud.md
@@ -966,7 +948,7 @@ registry:
         required:
           - api_key
     metadata:
-      pulls: 926
+      pulls: 914
       stars: 1
       githubStars: 21
       category: database
@@ -979,7 +961,6 @@ registry:
     description: Shopify.dev MCP server.
     title: Shopify
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/shopify@sha256:3ac0509a28a0674a375ae81c6b057a8dabdfb433a45aa70b7240b30edf916c8e
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/shopify.md
@@ -995,9 +976,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1115
+      pulls: 1093
       stars: 3
-      githubStars: 324
+      githubStars: 321
       category: ecommerce
       tags:
         - shopify
@@ -1008,7 +989,6 @@ registry:
     description: Local filesystem access with configurable allowed paths.
     title: Filesystem (Reference)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/filesystem@sha256:2702cd941c15a53df8adcdcdd36581b2b0f7994c10d6aac4deccc96152029250
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/filesystem.md
@@ -1047,9 +1027,9 @@ registry:
         required:
           - paths
     metadata:
-      pulls: 17794
+      pulls: 17448
       stars: 13
-      githubStars: 51529
+      githubStars: 51156
       category: devops
       tags:
         - filesystem
@@ -1060,7 +1040,6 @@ registry:
     description: Claude can perform Web Search | Exa with MCP (Model Context Protocol).
     title: Exa
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/exa@sha256:9a92cb216b24aa77a444f03d4222b8af083a824b18308c2719ba579c9d9703f7
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/exa.md
@@ -1077,9 +1056,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1478
+      pulls: 1438
       stars: 2
-      githubStars: 1673
+      githubStars: 1672
       category: search
       tags:
         - exa
@@ -1091,8 +1070,7 @@ registry:
     description: Official Firecrawl MCP Server - Adds powerful web scraping to Cursor, Claude and any other LLM clients.
     title: Firecrawl
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
-    image: mcp/firecrawl@sha256:34d69420f9e2601fe70f9c6802f706f83132caaab235c723a6d464fc0bbfb332
+    image: mcp/firecrawl@sha256:93e34756af8b91556dfc53a310cb487a60918290b8467c4a252b626f9cc6dcfa
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/firecrawl.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/firecrawl.json
@@ -1114,7 +1092,7 @@ registry:
         example: YOUR-API-KEY
     env:
       - name: FIRECRAWL_API_URL
-        value: '{{firecrawl.url}}'
+        value: '{{firecrawl.url|safe}}'
       - name: FIRECRAWL_RETRY_MAX_ATTEMPTS
         value: '{{firecrawl.retry_max}}'
       - name: FIRECRAWL_RETRY_INITIAL_DELAY
@@ -1149,9 +1127,9 @@ registry:
           url:
             type: string
     metadata:
-      pulls: 2748
+      pulls: 2664
       stars: 6
-      githubStars: 3321
+      githubStars: 3303
       category: search
       tags:
         - firecrawl
@@ -1163,8 +1141,7 @@ registry:
     description: The Tavily MCP server provides seamless interaction with the tavily-search and tavily-extract tools, real-time web search capabilities through the tavily-search tool and Intelligent data extraction from web pages via the tavily-extract tool.
     title: Tavily
     type: server
-    dateAdded: "2025-05-05T20:04:34Z"
-    image: mcp/tavily@sha256:9adf7557d3e2716ac700f9ed2582517180c6d46750fcab15ac6a6bb8f46a90b9
+    image: mcp/tavily@sha256:65a3a41186619c908264e5f6d83b043c149f910487e499fca3178b0468de87b7
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/tavily.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/tavily.json
@@ -1183,9 +1160,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1678
+      pulls: 1622
       stars: 3
-      githubStars: 441
+      githubStars: 434
       category: search
       tags:
         - tavily
@@ -1196,7 +1173,6 @@ registry:
     description: Image generation server using EverArt's API.
     title: EverArt (Archived)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/everart@sha256:c0926d70a44ed3456fab9ef9c3d11ce397df49e88894502b7f380e4ce87e985a
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/everart.md
@@ -1213,9 +1189,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1413
+      pulls: 1402
       stars: 2
-      githubStars: 51529
+      githubStars: 51156
       category: search
       tags:
         - everart
@@ -1226,7 +1202,6 @@ registry:
     description: Send emails directly from Cursor with this email sending MCP server.
     title: Send emails
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/resend@sha256:e2e56bdeb0a195b5dfbb8ed8e1445119cd91f49193ade7fece85e3ac75820404
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/resend.md
@@ -1262,7 +1237,7 @@ registry:
           - reply_to
           - sender
     metadata:
-      pulls: 1031
+      pulls: 1015
       stars: 3
       githubStars: 356
       category: communication
@@ -1274,7 +1249,6 @@ registry:
     description: Giving Claude ability to run code with E2B via MCP (Model Context Protocol).
     title: E2B
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/e2b@sha256:25f0fea7bea9ff8e3778f40d64531b2efb072b3b7bfbb938ff1c737b81a4e44f
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/e2b.md
@@ -1291,7 +1265,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1061
+      pulls: 1046
       stars: 1
       githubStars: 264
       category: devops
@@ -1304,7 +1278,6 @@ registry:
     description: MCP server that interacts with Obsidian via the Obsidian rest API community plugin.
     title: Obsidian
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/obsidian@sha256:96d5209572aeab121da3e49842fc3b1cd4e6bddb2bda2009d2dd4ffad96b9d2e
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/obsidian.md
@@ -1335,9 +1308,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1687
+      pulls: 1637
       stars: 11
-      githubStars: 1029
+      githubStars: 1018
       category: productivity
       tags:
         - obsidian
@@ -1348,7 +1321,6 @@ registry:
     description: Web and local search using Brave's Search API.
     title: Brave Search (Archived)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/brave-search@sha256:beaf4fc0822629e025a9545870d13df1bb7133662656251307f6a511d4386cad
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/brave.md
@@ -1366,9 +1338,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 15995
+      pulls: 15831
       stars: 15
-      githubStars: 51529
+      githubStars: 51156
       category: search
       tags:
         - brave
@@ -1379,8 +1351,7 @@ registry:
     description: Search, update, manage files and run terminal commands with AI.
     title: Desktop Commander
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
-    image: mcp/desktop-commander@sha256:039e21d21a8327a9500cd8ca69e0677d27a6c2c516ceef7d91e3938e57566e46
+    image: mcp/desktop-commander@sha256:d5dd597d7b3642d6d11931ec4a3d95eb75a1c99c2c38388a1db4f6afe0c661a9
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/desktop-commander.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/desktop-commander.json
@@ -1409,9 +1380,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 2992
-      stars: 10
-      githubStars: 3280
+      pulls: 2896
+      stars: 9
+      githubStars: 3247
       category: devops
       tags:
         - desktop-commander
@@ -1422,7 +1393,6 @@ registry:
     description: Fetches a URL from the internet and extracts its contents as markdown.
     title: Fetch (Reference)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/fetch@sha256:82566419ce79c93e903cb8c749e0547407959a31bc6424098a5b32c986eea2dc
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/fetch.md
@@ -1435,9 +1405,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 60406
+      pulls: 57164
       stars: 17
-      githubStars: 51529
+      githubStars: 51156
       category: devops
       tags:
         - fetch
@@ -1448,7 +1418,6 @@ registry:
     description: Time and timezone conversion capabilities.
     title: Time (Reference)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/time@sha256:da68d897c19b49a34be75f9c3656054f9ae0d115402e164eda5ee01ca3f547b3
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/time.md
@@ -1462,9 +1431,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 57960
+      pulls: 54857
       stars: 3
-      githubStars: 51529
+      githubStars: 51156
       category: devops
       tags:
         - time
@@ -1475,7 +1444,6 @@ registry:
     description: Access to Redis database operations.
     title: Redis
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/redis@sha256:21cd7d7cf8d0f9a9874dcd98eb0a174bd02da004b8ad0f944da1ecbfc59feb98
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/redis.md
@@ -1579,9 +1547,9 @@ registry:
           cluster_mode:
             type: boolean
     metadata:
-      pulls: 4821
+      pulls: 4778
       stars: 7
-      githubStars: 74
+      githubStars: 72
       category: database
       tags:
         - redis
@@ -1592,7 +1560,6 @@ registry:
     description: Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more.
     title: GitHub (Archived)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/github@sha256:b2cc41900f269b476488529441bdf92f06a0a793e4f04eb7c245262b3b2e34fa
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/github.md
@@ -1634,9 +1601,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 36590
+      pulls: 36362
       stars: 12
-      githubStars: 51529
+      githubStars: 51156
       category: devops
       tags:
         - github
@@ -1647,7 +1614,6 @@ registry:
     description: Tools for interacting with the Google Maps API.
     title: Google Maps (Archived)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/google-maps@sha256:631bee4b5108bead5072a170a6281cc572e991033d9d893477c3fe5a325994c0
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/google-maps.md
@@ -1670,9 +1636,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 3378
+      pulls: 3349
       stars: 5
-      githubStars: 51529
+      githubStars: 51156
       category: devops
       tags:
         - google-maps
@@ -1683,7 +1649,6 @@ registry:
     description: Connect to a Kubernetes cluster and manage it.
     title: Kubernetes
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/kubernetes@sha256:c7a47575bd534879d241395561bf606b1a737d56dbc906d55a7deb56afd5b4d3
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/kubernetes.md
@@ -1717,7 +1682,7 @@ registry:
     metadata:
       pulls: 2375
       stars: 9
-      githubStars: 722
+      githubStars: 717
       category: devops
       tags:
         - kubernetes
@@ -1728,7 +1693,6 @@ registry:
     description: Retrieves transcripts for given YouTube video URLs.
     title: YouTube transcripts
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/youtube-transcript@sha256:36d8842ec248ee600dcb908bea7f6156a238e02112bd6b1ffc36b58c2be806db
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/youtube_transcript.md
@@ -1741,9 +1705,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 2660
+      pulls: 2608
       stars: 5
-      githubStars: 27
+      githubStars: 25
       category: search
       tags:
         - youtube
@@ -1754,7 +1718,6 @@ registry:
     description: OpenAPI Schema Model Context Protocol Server.
     title: OpenAPI Schema
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/openapi-schema@sha256:230f344fcf6d998d533bdcf377e4268d1ff8b84b2d168b564d5c9944fafab819
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/openapi-schema.md
@@ -1778,7 +1741,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1428
+      pulls: 1389
       stars: 3
       githubStars: 26
       category: devops
@@ -1790,7 +1753,6 @@ registry:
     description: 'A model context protocol server to work with JetBrains IDEs: IntelliJ, PyCharm, WebStorm, etc. Also, works with Android Studio.'
     title: JetBrains
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/jetbrains@sha256:bcb7c571e2151ec3d23ab106ef581af53ec69d7d315f738b13dc09e883123e11
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/jetbrains.md
@@ -1842,7 +1804,7 @@ registry:
           port:
             type: integer
     metadata:
-      pulls: 1408
+      pulls: 1378
       stars: 1
       githubStars: 1
       category: devops
@@ -1855,7 +1817,6 @@ registry:
     description: An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime.
     title: AWS KB Retrieval (Archived)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/aws-kb-retrieval-server@sha256:5c59be2e5d6ea42bfa83e3b4de5f822e7f05b7aa5dc58bcd95ea43a97b87ced5
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/aws-kb-retrieval-server.md
@@ -1884,9 +1845,9 @@ registry:
         required:
           - access_key_id
     metadata:
-      pulls: 1808
+      pulls: 1782
       stars: 6
-      githubStars: 51529
+      githubStars: 51156
       category: devops
       tags:
         - aws
@@ -1897,7 +1858,6 @@ registry:
     description: Interact with the Discord platform.
     title: Discord
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/mcp-discord@sha256:e684ef1ed7e027d0f8669105e8fe376859c1623b5346a168d81143a211f1dc01
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/mcp-discord.md
@@ -1933,7 +1893,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 858
+      pulls: 843
       stars: 7
       githubStars: 1
       category: devops
@@ -1946,7 +1906,6 @@ registry:
     description: Provide LLMs hosted, clean markdown documentation of libraries and frameworks.
     title: Atlas Docs
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/atlas-docs@sha256:d32f8f48846a638d2db2d931d28bcf7c32fc09c96e4ed6fd82ee1905b7f26b89
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/atlas-docs.md
@@ -1962,7 +1921,7 @@ registry:
       - name: search_docs
     env:
       - name: ATLAS_API_URL
-        value: '{{atlas-docs.api_url}}'
+        value: '{{atlas-docs.api_url|safe}}'
     prompts: 0
     resources: {}
     config:
@@ -1973,7 +1932,7 @@ registry:
           api_url:
             type: string
     metadata:
-      pulls: 1264
+      pulls: 1246
       stars: 1
       githubStars: 16
       category: devops
@@ -1986,7 +1945,6 @@ registry:
     description: Audiense Insights MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your Audiense Insights account.
     title: Audiense Insights
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/audiense-insights@sha256:ef87e7db0dd2b97ae6c05e819080797831eee8fbf756e4d20e8efd3673e4936e
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/audiense-insights.md
@@ -2025,7 +1983,7 @@ registry:
         required:
           - client_id
     metadata:
-      pulls: 1106
+      pulls: 1094
       githubStars: 10
       category: devops
       tags:
@@ -2037,7 +1995,6 @@ registry:
     description: A Model Context Protocol Server connector for Bitrefill public API, to enable AI agents to search and shop on Bitrefill.
     title: Bitrefill
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/bitrefill@sha256:9a9352030e73cf2be3201c10bbb332abac6803024a14aa8c6f3f2b59b0bdb58c
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/bitrefill.md
@@ -2077,7 +2034,7 @@ registry:
         required:
           - api_id
     metadata:
-      pulls: 1029
+      pulls: 1018
       githubStars: 4
       category: devops
       tags:
@@ -2089,7 +2046,6 @@ registry:
     description: An MCP server capable of interacting with the Box API.
     title: Box
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/box@sha256:0c515b6d82b0f1c820a43a07d9a20bcbe3bb291cf08848cd3e2c8e74839f65b3
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/box.md
@@ -2141,9 +2097,9 @@ registry:
         required:
           - client_id
     metadata:
-      pulls: 1016
+      pulls: 1004
       stars: 1
-      githubStars: 32
+      githubStars: 31
       category: devops
       tags:
         - box
@@ -2153,7 +2109,6 @@ registry:
     description: A Model Context Protocol (MCP) server implementation that provides database capabilities for Chroma.
     title: Chroma
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/chroma@sha256:73bacb333bcd8de1436fb53501177249feec544726963a0cb5cd5531d57c038e
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/chroma.md
@@ -2181,9 +2136,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1135
+      pulls: 1119
       stars: 4
-      githubStars: 175
+      githubStars: 174
       category: devops
       tags:
         - chroma
@@ -2194,7 +2149,6 @@ registry:
     description: A Model Context Protocol server that provides access to Shodan API functionality.
     title: Shodan
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/cyreslab-ai-shodan@sha256:8b384a095df2ec66665f521259a28d73e947369d1aede94a447345a8ef6be774
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/cyreslab-ai-shodan.md
@@ -2215,7 +2169,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1103
+      pulls: 1090
       stars: 7
       githubStars: 2
       category: devops
@@ -2228,7 +2182,6 @@ registry:
     description: Dart AI Model Context Protocol (MCP) server.
     title: Dart AI
     type: server
-    dateAdded: "2025-05-05T20:04:34Z"
     image: mcp/dart@sha256:34c725f5e4db60ae4ce373ad7965d4e6fa28d910b6eb23c259665020a5b90ac2
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/dart.md
@@ -2255,7 +2208,7 @@ registry:
         example: dsa_...
     env:
       - name: DART_HOST
-        value: '{{dart.host}}'
+        value: '{{dart.host|safe}}'
     prompts: 0
     resources: {}
     config:
@@ -2266,7 +2219,7 @@ registry:
           host:
             type: string
     metadata:
-      pulls: 1316
+      pulls: 1275
       stars: 1
       githubStars: 80
       category: devops
@@ -2279,7 +2232,6 @@ registry:
     description: Databutton MCP Server.
     title: Databutton
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/databutton@sha256:9a33e9c71d7af51567a4572ade59ddb211ddd4df9239fd34d5cd0da1dd5f1c9f
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/databutton.md
@@ -2292,7 +2244,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1248
+      pulls: 1232
       stars: 1
       githubStars: 17
       category: devops
@@ -2305,7 +2257,6 @@ registry:
     description: The Descope Model Context Protocol (MCP) server provides an interface to interact with Descope's Management APIs, enabling the search and retrieval of project-related information.
     title: Descope
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/descope@sha256:ea46e1f91b3441f21e418ccded2d7d242281babe8ea9118aa9e068a4286981a2
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/descope.md
@@ -2337,7 +2288,7 @@ registry:
         required:
           - project_id
     metadata:
-      pulls: 952
+      pulls: 941
       githubStars: 10
       category: devops
       tags:
@@ -2349,7 +2300,6 @@ registry:
     description: DevHub CMS LLM integration through the Model Context Protocol.
     title: DevHub CMS
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/devhub-cms@sha256:3795b33841deb55a839a27f573cbe05b145dba01a893df022bc2ad243b26a9b5
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/devhub-cms.md
@@ -2377,7 +2327,7 @@ registry:
         example: YOUR_SECRET_HERE
     env:
       - name: DEVHUB_BASE_URL
-        value: '{{devhub-cms.url}}'
+        value: '{{devhub-cms.url|safe}}'
     prompts: 0
     resources: {}
     config:
@@ -2390,7 +2340,7 @@ registry:
         required:
           - url
     metadata:
-      pulls: 1041
+      pulls: 1030
       githubStars: 3
       category: devops
       tags:
@@ -2401,7 +2351,6 @@ registry:
     description: A Model Context Protocol (MCP) for analyzing and querying GitHub repositories using the GitHub Chat API.
     title: GitHub Chat
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/github-chat@sha256:f3700db496e33c1facee5ca1e2a4634edb216ce25d85b9c0e4959c0e4bc1a463
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/github-chat.md
@@ -2419,7 +2368,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1116
+      pulls: 1098
       stars: 3
       githubStars: 44
       category: devops
@@ -2432,7 +2381,6 @@ registry:
     description: Model Context Protocol (MCP) Server for Handwriting OCR.
     title: Handwriting OCR
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/handwriting-ocr@sha256:1c100a0eae5b38765bce9c2f4094e40bf60be83310733b6767b1c397bacd9fc6
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/handwriting-ocr.md
@@ -2451,7 +2399,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 937
+      pulls: 927
       stars: 1
       githubStars: 4
       category: devops
@@ -2463,7 +2411,6 @@ registry:
     description: A MCP server implementation for hyperbrowser.
     title: Hyperbrowser
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/hyperbrowser@sha256:f32cb6419ea2b48d1b3d5503c478cd506d7f2fed51667314040917115f59e0a1
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/hyperbrowser.md
@@ -2489,8 +2436,8 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1120
-      githubStars: 285
+      pulls: 1108
+      githubStars: 284
       category: devops
       tags:
         - hyperbrowser
@@ -2501,7 +2448,6 @@ registry:
     description: Hyperspell MCP Server.
     title: Hyperspell
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/hyperspell@sha256:1e44361035e6006e0d491363fb491c69e346235438ab46e2f7a0142144aff550
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/hyperspell.md
@@ -2534,7 +2480,7 @@ registry:
           use_resources:
             type: boolean
     metadata:
-      pulls: 1009
+      pulls: 996
       githubStars: 1
       category: devops
       tags:
@@ -2545,7 +2491,6 @@ registry:
     description: Model Context Protocol server for interacting with iaptic.
     title: Iaptic
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/iaptic@sha256:03cffe683e314a8802a4885c460f7c1cc44894f619e33ce1388b6edd4dbbb917
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/iaptic.md
@@ -2589,7 +2534,7 @@ registry:
         required:
           - app_name
     metadata:
-      pulls: 884
+      pulls: 873
       githubStars: 4
       category: devops
       tags:
@@ -2601,7 +2546,6 @@ registry:
     description: The Official Model Context Protocol (MCP) server for Kagi search & other tools.
     title: Kagi search
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/kagisearch@sha256:3d74793d4b1446ce32f4e536a6058620bbf4b397d9f77a4568f06a0111cd696a
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/kagisearch.md
@@ -2629,8 +2573,8 @@ registry:
           engine:
             type: string
     metadata:
-      pulls: 943
-      githubStars: 96
+      pulls: 932
+      githubStars: 95
       category: devops
       tags:
         - kagisearch
@@ -2641,7 +2585,6 @@ registry:
     description: MCP Server for MultiversX.
     title: MultiversX
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/multiversx-mx@sha256:36f692d9f1a52ccd739e23a9c07b5fba6bbdc0a5741045a6920c550edeb5ae02
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/multiversx-mx.md
@@ -2684,7 +2627,7 @@ registry:
           - network
           - wallet
     metadata:
-      pulls: 968
+      pulls: 958
       category: devops
       tags:
         - multiversx-mx
@@ -2695,7 +2638,6 @@ registry:
     description: Model Context Protocol (MCP) implementation for Opik enabling seamless IDE integration and unified access to prompts, projects, traces, and metrics.
     title: Opik
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/opik@sha256:af64778ea57939084520bc28f8df84bdc64717601fdef910ef6f0851e535a776
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/opik.md
@@ -2729,7 +2671,7 @@ registry:
         example: your_api_key
     env:
       - name: OPIK_API_BASE_URL
-        value: '{{opik.api_base_url}}'
+        value: '{{opik.api_base_url|safe}}'
       - name: OPIK_WORKSPACE_NAME
         value: '{{opik.workspace_name}}'
     prompts: 0
@@ -2744,9 +2686,9 @@ registry:
           workspace_name:
             type: string
     metadata:
-      pulls: 945
+      pulls: 934
       stars: 1
-      githubStars: 84
+      githubStars: 83
       category: devops
       tags:
         - opik
@@ -2757,7 +2699,6 @@ registry:
     description: A Model Context Protocol (MCP) server that empowers LLMs to use some of Open Srategy Partners' core writing and product marketing techniques.
     title: OSP Marketing Tools
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/osp_marketing_tools@sha256:9130d6e9057eec344174f4afc9541cbcc52aed272bf62aab9d5d08c67e03ddf6
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/osp_marketing_tools.md
@@ -2775,8 +2716,8 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1087
-      githubStars: 178
+      pulls: 1070
+      githubStars: 175
       category: devops
       tags:
         - osp_marketing_tools
@@ -2787,8 +2728,7 @@ registry:
     description: A Model Context Protocol (MCP) server that enables AI assistants like Claude to seamlessly access web data through Oxylabs' powerful web scraping technology.
     title: Oxylabs
     type: server
-    dateAdded: "2025-05-05T20:04:34Z"
-    image: mcp/oxylabs@sha256:a3ffa6b5940cadb6e18cd921b583261837b3186bb75390fb4c4d0e3b79605b19
+    image: mcp/oxylabs@sha256:ea0946ae03919f7eb42d35a07e2701c568271dec44d14f06f4c917fcaa58c27c
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/oxylabs.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/oxylabs.json
@@ -2819,9 +2759,9 @@ registry:
         required:
           - username
     metadata:
-      pulls: 1213
+      pulls: 1179
       stars: 2
-      githubStars: 33
+      githubStars: 32
       category: devops
       tags:
         - oxylabs
@@ -2832,7 +2772,6 @@ registry:
     description: Connector for Perplexity API, to enable real-time, web-wide research.
     title: Perplexity
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/perplexity-ask@sha256:48dd8d8e2468e2ca74ac09d6f68953707a9d66766e774ef1962131126e8de6d0
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/perplexity-ask.md
@@ -2851,9 +2790,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 9896
+      pulls: 9826
       stars: 6
-      githubStars: 1193
+      githubStars: 1186
       category: devops
       tags:
         - perplexity-ask
@@ -2864,7 +2803,6 @@ registry:
     description: ScapeGraph MCP Server.
     title: ScrapeGraph
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/scrapegraph@sha256:b0bd249caeebb2092ce984a1232de0cbb9f0a7fad15dd98b9801d11523dc36de
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/scrapegraph.md
@@ -2883,7 +2821,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1049
+      pulls: 1037
       stars: 3
       githubStars: 24
       category: devops
@@ -2896,7 +2834,6 @@ registry:
     description: A Model Context Protocol server for Scrapezy that enables AI models to extract structured data from websites.
     title: Scrapezy
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/scrapezy@sha256:ee2119932ac2a4fa599e58aed1fe69abe7fd7fcc851be9a6fc9c8f2727dd09dd
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/scrapezy.md
@@ -2913,7 +2850,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 945
+      pulls: 934
       stars: 2
       githubStars: 3
       category: devops
@@ -2926,7 +2863,6 @@ registry:
     description: MCP server for Tembo Cloud's platform API.
     title: Tembo
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/tembo@sha256:178ea1dae888ff7ef335ef246cddea531c2177c4ec41442e7e056f4b99a78e6e
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/tembo.md
@@ -2952,7 +2888,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 854
+      pulls: 843
       githubStars: 7
       category: devops
       tags:
@@ -2964,7 +2900,6 @@ registry:
     description: Triplewhale MCP Server.
     title: Triplewhale
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/triplewhale@sha256:0d4702dce52759833481d5c6ae50848309608eb1448c8a13eeba04226461519a
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/triplewhale.md
@@ -2981,8 +2916,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 902
-      githubStars: 1
+      pulls: 891
       category: devops
       tags:
         - triplewhale
@@ -2993,7 +2927,6 @@ registry:
     description: TweetBinder MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your TweetBinder by Audiense account.
     title: TweetBinder
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/tweetbinder@sha256:f9ae0228aebe8f8e09a5c817ebaab31b9460454e4c78c64593967790521f3d36
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/tweetbinder.md
@@ -3016,7 +2949,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 950
+      pulls: 938
       githubStars: 3
       category: devops
       tags:
@@ -3028,7 +2961,6 @@ registry:
     description: VeyraX MCP is the only connection you need to access all your tools in any MCP-compatible environment.
     title: VeyraX
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/veyrax@sha256:257d915330722bc84dbeec0a709a2e7edf9ba83b268799d075dad5cbb53d62b7
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/veyrax.md
@@ -3047,7 +2979,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 981
+      pulls: 971
       stars: 1
       githubStars: 36
       category: devops
@@ -3059,7 +2991,6 @@ registry:
     description: A Model Context Protocol (MCP) server that provides web search capabilities through DuckDuckGo, with additional features for content fetching and parsing.
     title: DuckDuckGo
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/duckduckgo@sha256:2aa033e58fe9e41d71ba4eaf9957c3dbf56224fa25dd769f1692b05771c73ac9
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/duckduckgo.md
@@ -3073,9 +3004,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 2759
+      pulls: 2689
       stars: 1
-      githubStars: 196
+      githubStars: 195
       category: devops
       tags:
         - duckduckgo
@@ -3086,7 +3017,6 @@ registry:
     description: The EduBase MCP server enables Claude and other LLMs to interact with EduBase's comprehensive e-learning platform through the Model Context Protocol (MCP).
     title: EduBase
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/edubase@sha256:0ccf862315268fd0d553231d3bb377db2a0587daace88c4ce4f712df3670dd43
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/edubase.md
@@ -3227,7 +3157,7 @@ registry:
       - name: EDUBASE_API_APP
         value: '{{edubase.app}}'
       - name: EDUBASE_API_URL
-        value: '{{edubase.url}}'
+        value: '{{edubase.url|safe}}'
     prompts: 0
     resources: {}
     config:
@@ -3243,7 +3173,7 @@ registry:
           - app
           - url
     metadata:
-      pulls: 922
+      pulls: 911
       githubStars: 12
       category: devops
       tags:
@@ -3255,7 +3185,6 @@ registry:
     description: Connect to Lara Translate API, enabling powerful translation capabilities with support for language detection and context-aware translations.
     title: Lara Translate
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/lara@sha256:f663242da613b32379b257156a05827a8fc9e37572f9b53efbaa0e22b76295d2
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/lara.md
@@ -3293,7 +3222,7 @@ registry:
         required:
           - key_id
     metadata:
-      pulls: 963
+      pulls: 953
       githubStars: 53
       category: devops
       tags:
@@ -3305,7 +3234,6 @@ registry:
     description: Connect your chat repl to wolfram alpha computational intelligence.
     title: WolframAlpha
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/wolfram-alpha@sha256:bfd7f6fff7d195fa9531c513a9c3346333f95767f67fe16d81541120670956f8
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/wolfram-alpha.md
@@ -3322,9 +3250,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 864
+      pulls: 849
       stars: 4
-      githubStars: 36
+      githubStars: 35
       category: devops
       tags:
         - wolfram-alpha
@@ -3335,7 +3263,6 @@ registry:
     description: 'Easily run glif.app AI workflows inside your LLM: image generators, memes, selfies, and more. Glif supports all major multimedia AI models inside one app.'
     title: glif.app
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/glif@sha256:592653a2179eeb9056c54ea010bd98e1fd57147b21b46d3305aa5ee0d20e9eb0
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/glif.md
@@ -3375,7 +3302,7 @@ registry:
           ignored_saved:
             type: boolean
     metadata:
-      pulls: 1009
+      pulls: 996
       githubStars: 18
       category: devops
       tags:
@@ -3387,7 +3314,6 @@ registry:
     description: Model Context Protocol (MCP) server for the Webflow Data API.
     title: Webflow
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/webflow@sha256:20e73bbc57ed58fa4396eefb0e0ee7f2a60c4121521765ffb40d70da60850f13
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/webflow.md
@@ -3436,7 +3362,6 @@ registry:
     description: A specialized server implementation for the Model Context Protocol (MCP) designed to integrate with CircleCI's development workflow. This project serves as a bridge between CircleCI's infrastructure and the Model Context Protocol, enabling enhanced AI-powered development experiences.
     title: CircleCI
     type: server
-    dateAdded: "2025-05-05T20:04:34Z"
     image: mcp/circleci@sha256:ab05759c38c0f9f5ce350c673ab97073f26633697d9befa694defa7121f0cbb4
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/circleci.md
@@ -3462,7 +3387,7 @@ registry:
         example: your-circleci-token
     env:
       - name: CIRCLECI_BASE_URL
-        value: '{{circleci.url}}'
+        value: '{{circleci.url|safe}}'
     prompts: 0
     resources: {}
     config:
@@ -3473,7 +3398,7 @@ registry:
           url:
             type: string
     metadata:
-      pulls: 1189
+      pulls: 1150
       githubStars: 42
       category: devops
       tags:
@@ -3485,7 +3410,6 @@ registry:
     description: The official ElevenLabs MCP server.
     title: ElevenLabs
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/elevenlabs@sha256:ea82f9dd3f90412de6372cf3cf688377cba8e1db652225279417f95be0147f4d
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/elevenlabs.md
@@ -3520,9 +3444,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 890
+      pulls: 861
       stars: 2
-      githubStars: 726
+      githubStars: 722
       category: devops
       tags:
         - elevenlabs
@@ -3533,7 +3457,6 @@ registry:
     description: Enable fast, free real-time web search and access premium data from trusted media brands—news, financial markets, sports, entertainment, weather, and more. Build powerful AI agents with Dappier.
     title: Dappier
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/dappier@sha256:69c784486367641e3316e82c5ac1adfe23789eb666ea5522c881069a15073fdf
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/dappier.md
@@ -3551,7 +3474,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 832
+      pulls: 821
       githubStars: 19
       category: devops
       tags:
@@ -3563,7 +3486,6 @@ registry:
     description: RISKEN's official MCP Server.
     title: RISKEN
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/risken@sha256:764007dbad290bfe8549da49878142b3467608d2c3e13cfe9ab7e04257d12cc7
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/risken.md
@@ -3582,7 +3504,7 @@ registry:
         example: your_access_token
     env:
       - name: RISKEN_URL
-        value: '{{risken.url}}'
+        value: '{{risken.url|safe}}'
     command:
       - stdio
     prompts: 0
@@ -3595,7 +3517,7 @@ registry:
           url:
             type: string
     metadata:
-      pulls: 711
+      pulls: 698
       githubStars: 3
       category: devops
       tags:
@@ -3607,7 +3529,6 @@ registry:
     description: Context7 MCP Server -- Up-to-date code documentation for LLMs and AI code editors.
     title: Context7
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/context7@sha256:43cebcb8b8418d1bc32f7e1eedf76e919fbc591142106ce3cf07ba7972ea1b63
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/context7.md
@@ -3624,9 +3545,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 4742
+      pulls: 4578
       stars: 5
-      githubStars: 10942
+      githubStars: 10635
       category: devops
       tags:
         - context7
@@ -3637,7 +3558,6 @@ registry:
     description: The Azure MCP Server, bringing the power of Azure to your agents.
     title: Azure
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/azure@sha256:f9a3c1625a199d483d0404642271f80603326290734840dd5da1de0ad3bffdb4
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/azure.md
@@ -3679,9 +3599,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 3274
+      pulls: 3151
       stars: 4
-      githubStars: 704
+      githubStars: 697
       category: devops
       tags:
         - azure
@@ -3692,8 +3612,7 @@ registry:
     description: MCP server that integrates the LINE Messaging API to connect an AI Agent to the LINE Official Account.
     title: LINE
     type: server
-    dateAdded: "2025-05-05T20:04:34Z"
-    image: mcp/line@sha256:0488798904659774ba8e5099590330780c8f18c146c49fdfdc9d8d08f47b6557
+    image: mcp/line@sha256:cfcb5e02aa721c88f109590b4cbabe2e6159d949929e9558732571b6275a2867
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/line.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/line.json
@@ -3726,8 +3645,8 @@ registry:
         required:
           - user_id
     metadata:
-      pulls: 1500
-      githubStars: 391
+      pulls: 1344
+      githubStars: 390
       category: devops
       tags:
         - line
@@ -3738,7 +3657,6 @@ registry:
     description: Official Model Context Protocol server for Gyazo.
     title: Gyazo
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/gyazo@sha256:f53288c6736b19a526a08af7ba367cea7f0da5ab2bf8b6263c170f36a47b046f
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/gyazo.md
@@ -3770,7 +3688,6 @@ registry:
     description: Model Context Protocol server for Hackle.
     title: Hackle
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/hackle@sha256:d4495075b7cc3d251a1fef592687286e99fc81301db854d04679f024aa8704e7
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/hackle.md
@@ -3805,7 +3722,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 725
+      pulls: 715
       githubStars: 1
       category: devops
       tags:
@@ -3817,7 +3734,6 @@ registry:
     description: Official flexprice MCP Server.
     title: FlexPrice
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/flexprice@sha256:03317edc59485536374dc9057d6e796b255e571464f7a84bbd4f7afe6434e6a0
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/flexprice.md
@@ -3868,7 +3784,7 @@ registry:
           base_url:
             type: string
     metadata:
-      pulls: 672
+      pulls: 662
       stars: 1
       githubStars: 2
       category: devops
@@ -3881,8 +3797,7 @@ registry:
     description: Playwright MCP server.
     title: Playwright
     type: server
-    dateAdded: "2025-05-05T20:04:34Z"
-    image: mcp/playwright@sha256:35d141f6af20b347fdea9c554e890fb3f09af8dc439ab33765c028e39b0a814e
+    image: mcp/playwright@sha256:d6fbe618ad6ea251a285229d9b7c9fc6f4ef10dd371dc8dd92a419612ca7cc5b
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/playwright.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/playwright.json
@@ -3918,9 +3833,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 7972
+      pulls: 7292
       stars: 9
-      githubStars: 11284
+      githubStars: 11171
       category: devops
       tags:
         - playwright
@@ -3931,7 +3846,6 @@ registry:
     description: Razorpay's Official MCP Server.
     title: Razorpay
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/razorpay@sha256:366864cd663f3206d5f59146045c783bba0855d42df5cfbfb6108529f20eb27c
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/razorpay.md
@@ -3997,7 +3911,7 @@ registry:
           - key_id
     metadata:
       pulls: 622
-      githubStars: 188
+      githubStars: 187
       category: devops
       tags:
         - razorpay
@@ -4008,7 +3922,6 @@ registry:
     description: Interact with your Fibery workspace.
     title: Fibery
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/fibery@sha256:8f1d1b1941d68ace94f7830fc5f8acede9c8096e7aea86f71fb96dc932360d88
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/fibery.md
@@ -4030,11 +3943,11 @@ registry:
         example: your-api-token
     env:
       - name: FIBERY_HOST
-        value: '{{fibery.host}}'
+        value: '{{fibery.host|safe}}'
     prompts: 0
     resources: {}
     metadata:
-      pulls: 677
+      pulls: 666
       githubStars: 17
       category: devops
       tags:
@@ -4046,7 +3959,6 @@ registry:
     description: MCP Server for huqsvarna automower.
     title: Husqvarna Automower
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/husqvarna-automower@sha256:4bed17348dab2827a6f9354d42db86076b9cbd61c62e1d0dbc36d9f98abadb11
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/husqvarna-automower.md
@@ -4073,7 +3985,7 @@ registry:
           client_id:
             type: string
     metadata:
-      pulls: 455
+      pulls: 444
       githubStars: 1
       category: devops
       tags:
@@ -4084,7 +3996,6 @@ registry:
     description: Provide persistent memory capabilities through Neo4j graph database integration.
     title: Neo4j Memory
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/neo4j-memory@sha256:d2645f79ea59a45a9ebeab32ab347b35306b53f8ee9219067cefc0be3e521771
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/neo4j-memory.md
@@ -4127,9 +4038,9 @@ registry:
           - url
           - username
     metadata:
-      pulls: 834
+      pulls: 808
       stars: 4
-      githubStars: 376
+      githubStars: 370
       category: devops
       tags:
         - neo4j-memory
@@ -4140,7 +4051,6 @@ registry:
     description: Interact with Neo4j using Cypher graph queries.
     title: Neo4j Cypher
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/neo4j-cypher@sha256:7b4c705d2e511ad8f98c96ce1f4d97d656b7ca1857bac7f5cc99e3ccd0244626
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/neo4j-cypher.md
@@ -4176,9 +4086,9 @@ registry:
           - url
           - username
     metadata:
-      pulls: 1170
+      pulls: 1144
       stars: 1
-      githubStars: 376
+      githubStars: 370
       category: devops
       tags:
         - neo4j-cypher
@@ -4189,7 +4099,6 @@ registry:
     description: Manage Neo4j Aura database instances through the Neo4j Aura API.
     title: Neo4j Cloud Aura Api
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/neo4j-cloud-aura-api@sha256:c98655c1b11cf843b9f7ea2e9706290193ee5a23d811e2f6208d2733959f3e22
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/neo4j-cloud-aura-api.md
@@ -4229,9 +4138,9 @@ registry:
         required:
           - client_id
     metadata:
-      pulls: 571
+      pulls: 560
       stars: 2
-      githubStars: 376
+      githubStars: 370
       category: devops
       tags:
         - neo4j-cloud-aura-api
@@ -4242,7 +4151,6 @@ registry:
     description: A Model Context Protocol (MCP) server that retrieves information from Wikipedia to provide context to LLMs.
     title: Wikipedia
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/wikipedia-mcp@sha256:20814cab1027696b3c3cf10409ce9d736fbaae90aa39e719860aa88ea2920379
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/wikipedia-mcp.md
@@ -4263,7 +4171,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1949
+      pulls: 1888
       stars: 3
       githubStars: 32
       category: devops
@@ -4276,7 +4184,6 @@ registry:
     description: A Node.js–based Model Context Protocol server that spins up disposable Docker containers to execute arbitrary JavaScript.
     title: Node.js Sandbox
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/node-code-sandbox@sha256:87f0efdcfb8be6177222c070e5e9279e2c1c71bba021ea4fc1d0034bac7157cc
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/node-code-sandbox.md
@@ -4294,9 +4201,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 730
+      pulls: 693
       stars: 2
-      githubStars: 66
+      githubStars: 65
       category: devops
       tags:
         - node-code-sandbox
@@ -4306,8 +4213,7 @@ registry:
     description: Seamlessly create diagrams using the Python diagrams package DSL. This server allows you to generate AWS diagrams, sequence diagrams, flow diagrams, and class diagrams using Python code.
     title: AWS Diagram
     type: server
-    dateAdded: "2025-05-05T20:04:34Z"
-    image: mcp/aws-diagram@sha256:029895f5d2f0ebd4e3114eac67bebb21e8ddd64766e3a086c0916b18aa7871a3
+    image: mcp/aws-diagram@sha256:9b7262d040cbcc8f57b41a5dec30fa1d76f6a9e2e1bc836ab3ea9857f2b4ad40
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/aws-diagram.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/aws-diagram.json
@@ -4321,8 +4227,8 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1348
-      githubStars: 3636
+      pulls: 1133
+      githubStars: 3580
       category: devops
       tags:
         - aws-diagram
@@ -4333,8 +4239,7 @@ registry:
     description: Tools to access AWS documentation, search for content, and get recommendations.
     title: AWS Documentation
     type: server
-    dateAdded: "2025-05-05T20:04:34Z"
-    image: mcp/aws-documentation@sha256:fef4408a9087488cfedbe563a6af6bfe9f6d93e8520191ff7a09c54a15a4664b
+    image: mcp/aws-documentation@sha256:cefe6008f7dbf11e75fb325059c7839054549a42abd928131ae7c358249a514e
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/aws-documentation.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/aws-documentation.json
@@ -4348,9 +4253,8 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1605
-      stars: 1
-      githubStars: 3636
+      pulls: 1369
+      githubStars: 3580
       category: devops
       tags:
         - aws-documentation
@@ -4361,8 +4265,7 @@ registry:
     description: AWS Cloud Development Kit (CDK) best practices, infrastructure as code patterns, and security compliance with CDK Nag.
     title: AWS CDK
     type: server
-    dateAdded: "2025-05-05T20:04:34Z"
-    image: mcp/aws-cdk-mcp-server@sha256:7618e788ac93dd8edb9ccfa4dfd9b2c4779d87eceec39ef5fe81fffad59167c4
+    image: mcp/aws-cdk-mcp-server@sha256:43b9b279470a11b8e43f1c6c93d0cf33dabb458423af75df822cc50f402be6ba
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/aws-cdk-mcp-server.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/aws-cdk-mcp-server.json
@@ -4380,8 +4283,8 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 1021
-      githubStars: 3636
+      pulls: 832
+      githubStars: 3580
       category: devops
       tags:
         - aws-cdk-mcp-server
@@ -4392,8 +4295,7 @@ registry:
     description: Starting point for using the awslabs MCP servers.
     title: AWS Core MCP Server
     type: server
-    dateAdded: "2025-05-05T20:04:34Z"
-    image: mcp/aws-core-mcp-server@sha256:7982ba1ae8ee619aa801e43a743c432d55988519b9471238d3972c89d7461d42
+    image: mcp/aws-core-mcp-server@sha256:8158120ec522ab647b9a43ed229b1b2b46173723fffb00a589084a38d12e374f
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/aws-core-mcp-server.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/aws-core-mcp-server.json
@@ -4405,8 +4307,8 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 3249
-      githubStars: 3636
+      pulls: 2734
+      githubStars: 3580
       category: devops
       tags:
         - aws-core-mcp-server
@@ -4417,7 +4319,6 @@ registry:
     description: Use the Docker CLI.
     title: Docker
     type: poci
-    dateAdded: "2025-05-05T20:04:34Z"
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/docker.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/docker.json
@@ -4454,7 +4355,6 @@ registry:
     description: This full functional MCP Server allows you to connect to any data source in Connect Cloud from Claude Desktop.
     title: CData Connect Cloud
     type: server
-    dateAdded: "2025-05-15T20:08:35Z"
     image: mcp/cdata-connectcloud@sha256:8826daad28317df0162efd8df8fc347555cffacc93b753d85d54382ea50178c9
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/cdata-connectcloud.md
@@ -4494,7 +4394,7 @@ registry:
         required:
           - username
     metadata:
-      pulls: 235
+      pulls: 225
       stars: 1
       githubStars: 1
       category: devops
@@ -4506,8 +4406,7 @@ registry:
     description: A Model Context Protocol server to connect to MongoDB databases and MongoDB Atlas Clusters.
     title: MongoDB
     type: server
-    dateAdded: "2025-05-15T20:04:34Z"
-    image: mcp/mongodb@sha256:4a173072c128932ceb49a98bbd81490793e4ac57ef8bad0174f53cb3f0abae11
+    image: mcp/mongodb@sha256:fd2a77145b92bac3fc620632a62b0528ccd3d9255b5976e11d059d2e985e73da
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/mongodb.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/mongodb.json
@@ -4542,8 +4441,8 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 586
-      githubStars: 193
+      pulls: 513
+      githubStars: 188
       category: database
       tags:
         - mongodb
@@ -4554,7 +4453,6 @@ registry:
     description: "\U0001F680 Tigris MCP Server implements the MCP specification to create a seamless connection between AI agents and Tigris key features like bucket and object management."
     title: Tigris
     type: server
-    dateAdded: "2025-05-20T20:08:35Z"
     image: tigrisdata/tigris-mcp-server@sha256:d1a9115de96796384bbcf997fdd64fd7a757dd018066e03f697dbbfabcf78ae2
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/tigris.md
@@ -4606,7 +4504,6 @@ registry:
     description: The Terraform MCP Server provides seamless integration with Terraform ecosystem, enabling advanced automation and interaction capabilities for Infrastructure as Code (IaC) development.
     title: Hashicorp Terraform
     type: server
-    dateAdded: "2025-05-20T20:08:35Z"
     image: hashicorp/terraform-mcp-server@sha256:9b01dbb948b9362575b9fb7d70fac1739365eeae5d7b264db809f4b11b5da6c3
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/terraform.md
@@ -4622,7 +4519,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      githubStars: 561
+      githubStars: 550
       category: devops
       tags:
         - hashicorp
@@ -4633,7 +4530,6 @@ registry:
     description: Seamless interaction with Novita AI platform resources.
     title: Novita
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/novita@sha256:baa8daaa81bba813f51f11895c17f9fcf029d841a6bb698eeaa11be83d36f8ef
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/novita.md
@@ -4668,7 +4564,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 124
+      pulls: 114
       githubStars: 11
       category: ai
       tags:
@@ -4680,8 +4576,7 @@ registry:
     description: Terraform on AWS best practices, infrastructure as code patterns, and security compliance with Checkov.
     title: AWS Terraform
     type: server
-    dateAdded: "2025-05-22T20:04:34Z"
-    image: mcp/aws-terraform@sha256:5e5c1227bbc670437a17a74e6179704b701ce61e82fd9d0f3e8d53dce9757c78
+    image: mcp/aws-terraform@sha256:10408d5cf1dcc54d7d2ebf1a11afdfc7373060113f37f5bcb56a6e9528836141
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/aws-terraform.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/aws-terraform.json
@@ -4699,8 +4594,8 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 556
-      githubStars: 3636
+      pulls: 366
+      githubStars: 3580
       category: devops
       tags:
         - aws
@@ -4711,7 +4606,6 @@ registry:
     description: Database interaction and business intelligence capabilities.
     title: SQLite (Archived)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/sqlite@sha256:c95c3ede6bbe9a4319257628e5ded35e91c59c0816d33282fe371870e42e64de
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/SQLite.md
@@ -4734,9 +4628,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 7176
+      pulls: 7072
       stars: 9
-      githubStars: 51529
+      githubStars: 51156
       category: database
       tags:
         - sqlite
@@ -4747,7 +4641,6 @@ registry:
     description: Standard curl tool.
     title: curl
     type: poci
-    dateAdded: "2025-05-05T20:04:34Z"
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/curl.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/curl.json
@@ -4782,7 +4675,6 @@ registry:
     description: Use ffmpeg to process video files.
     title: FFmpeg
     type: poci
-    dateAdded: "2025-05-05T20:04:34Z"
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/ffmpeg.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/ffmpeg.json
@@ -4818,9 +4710,9 @@ registry:
           command:
             - test
             - -f
-            - '{{path}}'
+            - '{{path|safe}}'
           volumes:
-            - '{{path}}:{{path}}'
+            - '{{path|safe}}:{{path|safe}}'
       - name: ffmpeg
         description: run the ffmpeg command
         parameters:
@@ -4842,7 +4734,7 @@ registry:
           command:
             - '{{args|into}}'
           volumes:
-            - '{{basedir}}:{{basedir}}'
+            - '{{basedir|safe}}:{{basedir|safe}}'
     prompts: 0
     resources: {}
     metadata:
@@ -4856,7 +4748,6 @@ registry:
     description: Knowledge graph-based persistent memory system.
     title: Memory (Reference)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/memory@sha256:db0c2db07a44b6797eba7a832b1bda142ffc899588aae82c92780cbb2252407f
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/memory.md
@@ -4879,9 +4770,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 11113
+      pulls: 10863
       stars: 16
-      githubStars: 51529
+      githubStars: 51156
       category: ai
       tags:
         - mcp
@@ -4892,7 +4783,6 @@ registry:
     description: Dynamic and reflective problem-solving through thought sequences.
     title: Sequential Thinking (Reference)
     type: server
-    dateAdded: "2025-05-05T20:08:35Z"
     image: mcp/sequentialthinking@sha256:cd3174b2ecf37738654cf7671fb1b719a225c40a78274817da00c4241f465e5f
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/sequentialthinking.md
@@ -4905,9 +4795,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 20251
+      pulls: 19819
       stars: 14
-      githubStars: 51529
+      githubStars: 51156
       category: ai
       tags:
         - mcp
@@ -4918,7 +4808,6 @@ registry:
     description: Interact with your Render resources via LLMs.
     title: Render
     type: server
-    dateAdded: "2025-05-23T20:08:35Z"
     image: mcp/render@sha256:face1c1145c47bae7ee8d8ff19722bd02826eb0f88cd2843b57287344edee57f
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/render.md
@@ -4955,7 +4844,7 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 90
+      pulls: 74
       githubStars: 5
       category: devops
       tags:
@@ -4967,8 +4856,7 @@ registry:
     description: provides tools and templates to create a functioning Vizro chart or dashboard step by step.
     title: Vizro
     type: server
-    dateAdded: "2025-05-29T20:04:34Z"
-    image: mcp/vizro@sha256:d17168a8128ca550c85f13d5137edc009b7f98cf0507778502970cd21e3831be
+    image: mcp/vizro@sha256:f34d9252a9cd70b5a63d9b5275e04015357d287d2eb53446b9c1fc029731f07a
     ref: ""
     readme: http://desktop.docker.com/mcp/catalog/v2/readme/vizro.md
     toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/vizro.json
@@ -4985,9 +4873,9 @@ registry:
     prompts: 0
     resources: {}
     metadata:
-      pulls: 234
+      pulls: 155
       stars: 1
-      githubStars: 2931
+      githubStars: 2930
       category: data-visualization
       tags:
         - dashboard
@@ -4999,112 +4887,3 @@ registry:
         - visualization
       license: Apache License 2.0
       owner: mckinsey
-  paper-search:
-    description: A MCP for searching and downloading academic papers from multiple sources like arXiv, PubMed, bioRxiv, etc.
-    title: Paper Search
-    type: server
-    dateAdded: "2025-06-05T05:10:44Z"
-    image: mcp/paper-search@sha256:114cb7b7a1aec3ba5138780312f77a21e1a5965c7d716fd561ccb482bf1bba0b
-    ref: ""
-    readme: http://desktop.docker.com/mcp/catalog/v2/readme/paper-search.md
-    toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/paper-search.json
-    source: https://github.com/openags/paper-search-mcp/tree/main
-    upstream: https://github.com/openags/paper-search-mcp
-    icon: https://avatars.githubusercontent.com/u/197887910?v=4
-    tools:
-      - name: download_arxiv
-      - name: download_biorxiv
-      - name: download_medrxiv
-      - name: download_pubmed
-      - name: read_arxiv_paper
-      - name: read_biorxiv_paper
-      - name: read_medrxiv_paper
-      - name: read_pubmed_paper
-      - name: search_arxiv
-      - name: search_biorxiv
-      - name: search_google_scholar
-      - name: search_medrxiv
-      - name: search_pubmed
-    prompts: 0
-    resources: {}
-    metadata:
-      pulls: 17
-      githubStars: 67
-      category: search
-      tags:
-        - academic
-        - search
-      license: MIT License
-      owner: openags
-  minecraft-wiki:
-    description: A MCP Server for browsing the official Minecraft Wiki!.
-    title: Minecraft Wiki
-    type: server
-    dateAdded: "2025-06-05T06:09:26Z"
-    image: mcp/minecraft-wiki@sha256:ead8a5af21dc57d4fca78c54bf6bd0ec0d99465da05760f4859cc21b4c4c7b26
-    ref: ""
-    readme: http://desktop.docker.com/mcp/catalog/v2/readme/minecraft-wiki.md
-    toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/minecraft-wiki.json
-    source: https://github.com/L3-N0X/Minecraft-Wiki-MCP/tree/main
-    upstream: https://github.com/L3-N0X/Minecraft-Wiki-MCP
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/minecraft.svg
-    tools:
-      - name: MinecraftWiki_getCategoriesForPage
-      - name: MinecraftWiki_getPageContent
-      - name: MinecraftWiki_getPageSection
-      - name: MinecraftWiki_getPageSummary
-      - name: MinecraftWiki_getSectionsInPage
-      - name: MinecraftWiki_listAllCategories
-      - name: MinecraftWiki_listCategoryMembers
-      - name: MinecraftWiki_resolveRedirect
-      - name: MinecraftWiki_searchWiki
-    prompts: 0
-    resources: {}
-    metadata:
-      pulls: 21
-      githubStars: 1
-      category: games
-      tags:
-        - games
-        - minecraft
-        - search
-      owner: L3-N0X
-  pinecone:
-    description: Pinecone Assistant MCP server.
-    title: Pinecone Assistant
-    type: server
-    dateAdded: "2025-06-05T06:44:51Z"
-    image: mcp/pinecone@sha256:1c63001bb058aaa60cb8d415390bdca3b242f162839cd9f0e63c77ee9617ee4f
-    ref: ""
-    readme: http://desktop.docker.com/mcp/catalog/v2/readme/pinecone.md
-    toolsUrl: http://desktop.docker.com/mcp/catalog/v2/tools/pinecone.json
-    source: https://github.com/pinecone-io/assistant-mcp/tree/main
-    upstream: https://github.com/pinecone-io/assistant-mcp
-    icon: https://avatars.githubusercontent.com/u/54333248?v=4
-    tools:
-      - name: assistant_context
-    secrets:
-      - name: pinecone.api_key
-        env: PINECONE_API_KEY
-        example: <YOUR_PINECONE_API_KEY_HERE>
-    env:
-      - name: PINECONE_ASSISTANT_HOST
-        value: '{{pinecone.assistant_host}}'
-    prompts: 0
-    resources: {}
-    config:
-      - name: pinecone
-        description: Configure the connection to Pinecone Assistant
-        type: object
-        properties:
-          assistant_host:
-            type: string
-    metadata:
-      pulls: 16
-      githubStars: 18
-      category: database
-      tags:
-        - database
-        - machine-learning
-      license: MIT License
-      owner: pinecone-io

@@ -84,8 +84,8 @@ services:
     networks:
     - mcp-network
     ports:
-      - "127.0.0.1:0:8811"
-      - "127.0.0.1:8812:8812"
+    - 8811:8811
+    - 8812:8812
     restart: unless-stopped
     volumes:
     - ./config.yaml:/app/config.yaml:ro
@@ -106,8 +106,8 @@ services:
     networks:
     - mcp-network
     ports:
-      - "127.0.0.1:80:80"
-      - "127.0.0.1:8080:8080"
+    - 80:80
+    - 8080:8080
     restart: unless-stopped
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock:ro

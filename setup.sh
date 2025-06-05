@@ -62,29 +62,3 @@ docker-compose up -d
 # Wait and check health
 sleep 8
 curl -fs http://localhost:8811/health && echo "✅ MCP is healthy!" || echo "❌ MCP health check failed."
-
-# Detect dynamic host ports
-
-# Detect if running under WSL with mirrored host network
-WSL_HOST=""
-if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null; then
-  WSL_HOST="localhost"
-  echo "🧩 Running inside WSL with host-mirrored network"
-else
-  WSL_HOST="localhost"
-fi
-echo "🔍 Resolving dynamic ports..."
-MCP_PORT=$(docker inspect -f '{{range $p, $conf := .NetworkSettings.Ports}}{{if eq $p "8811/tcp"}}{{(index $conf 0).HostPort}}{{end}}{{end}}' mcp-server)
-TRAEFIK_PORT=$(docker inspect -f '{{range $p, $conf := .NetworkSettings.Ports}}{{if eq $p "8080/tcp"}}{{(index $conf 0).HostPort}}{{end}}{{end}}' mcp-traefik)
-
-echo "✅ MCP running at http://$WSL_HOST:$MCP_PORT"
-echo "✅ Traefik dashboard at http://$WSL_HOST:$TRAEFIK_PORT"
-
-# Auto-open in browser (Linux/macOS only)
-if which xdg-open > /dev/null; then
-  xdg-open "http://$WSL_HOST:$MCP_PORT"
-  xdg-open "http://$WSL_HOST:$TRAEFIK_PORT"
-elif which open > /dev/null; then
-  open "http://$WSL_HOST:$MCP_PORT"
-  open "http://$WSL_HOST:$TRAEFIK_PORT"
-fi

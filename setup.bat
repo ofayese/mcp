@@ -71,9 +71,3 @@ docker-compose up -d
 :: Delay then health check
 timeout /t 8 >nul
 curl http://localhost:8811/health && echo ✅ MCP is healthy! || echo ❌ MCP health check failed!
-
-
-REM Detect dynamic ports via inspect (requires PowerShell or WSL for automation)
-echo 🔍 Please run the following to find MCP/Traefik ports:
-echo docker inspect -f "{{range $p, $conf := .NetworkSettings.Ports}}{{if eq $p "8811/tcp"}}{{(index $conf 0).HostPort}}{{end}}{{end}}" mcp-server
-echo docker inspect -f "{{range $p, $conf := .NetworkSettings.Ports}}{{if eq $p "8080/tcp"}}{{(index $conf 0).HostPort}}{{end}}{{end}}" mcp-traefik
