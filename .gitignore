@@ -2,7 +2,6 @@
 secrets.yaml
 registry.yaml
 config.yaml
-.env
 *.ps1
 *.sh
 

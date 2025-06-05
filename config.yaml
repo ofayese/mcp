@@ -86,7 +86,7 @@ cache:
 
 # Secrets configuration
 secrets:
-  file: "c:/Users/ofayese/.docker/mcp/secrets.yaml"
+  directory: "c:/Users/ofayese/.docker/mcp/secrets"
 
 # Feature flags
 features:

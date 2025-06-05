@@ -1,53 +1,64 @@
+# MCP Docker Compose Configuration
+# Updated: June 2025
+
+version: "3.8"  # Explicit version specification
+
 networks:
   mcp-network:
     driver: bridge
     ipam:
+      driver: default
       config:
       - subnet: 172.40.1.0/24
-      driver: default
 services:
   mcp-postgres:
     container_name: mcp-postgres
+    image: postgres:16-alpine
     environment:
-    - POSTGRES_DB=${POSTGRES_DB:-mcp}
-    - POSTGRES_USER=${POSTGRES_USER:-mcp}
-    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-mcp_password}
+      - POSTGRES_DB=${POSTGRES_DB:-mcp}
+      - POSTGRES_USER=${POSTGRES_USER:-mcp}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-mcp_password}
+      - POSTGRES_HOST_AUTH_METHOD=scram-sha-256
+      - POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256
     healthcheck:
-      interval: 30s
-      retries: 3
-      test:
-      - CMD-SHELL
-      - pg_isready -U ${POSTGRES_USER:-mcp}
-      timeout: 10s
-    image: postgres:15-alpine
-    networks:
-    - mcp-network
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mcp}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     restart: unless-stopped
+    networks:
+      - mcp-network
+    security_opt:
+      - no-new-privileges:true
     volumes:
-    - mcp-data:/var/lib/postgresql/data
-    - ./init-db:/docker-entrypoint-initdb.d:ro
+      - mcp-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d:ro
   mcp-redis:
-    command: redis-server --appendonly yes
     container_name: mcp-redis
+    image: redis:7.2-alpine
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-mcp}
     healthcheck:
-      interval: 30s
-      retries: 3
-      test:
-      - CMD
-      - redis-cli
-      - ping
-      timeout: 10s
-    image: redis:7-alpine
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-mcp}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     networks:
-    - mcp-network
+      - mcp-network
+    security_opt:
+      - no-new-privileges:true
     restart: unless-stopped
     volumes:
-    - mcp-cache:/data
+      - mcp-cache:/data
   mcp-server:
     container_name: dhv01mcp
+    image: mcp/docker:latest
     depends_on:
-    - mcp-redis
-    - mcp-postgres
+      mcp-redis:
+        condition: service_healthy
+      mcp-postgres:
+        condition: service_healthy
     deploy:
       resources:
         limits:
@@ -57,64 +68,72 @@ services:
           cpus: '0.5'
           memory: 512M
     environment:
-    - MCP_CONFIG_PATH=/app/config.yaml
-    - MCP_SECRETS_PATH=/app/secrets.yaml
-    - MCP_REGISTRY_PATH=/app/registry.yaml
-    - MCP_NETWORK=mcp-network
-    - DOCKER_HOST=unix:///var/run/docker.sock
-    - LOG_LEVEL=${LOG_LEVEL:-info}
-    - MCP_DATA_DIR=/app/data
-    - MCP_CACHE_DIR=/app/cache
+      - MCP_CONFIG_PATH=/app/config.yaml
+      - MCP_SECRETS_PATH=/app/secrets
+      - MCP_REGISTRY_PATH=/app/registry.yaml
+      - MCP_NETWORK=mcp-network
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - MCP_DATA_DIR=/app/data
+      - MCP_CACHE_DIR=/app/cache
     healthcheck:
-      interval: 30s
-      retries: 3
-      start_period: 40s
-      test:
-      - CMD
-      - curl
-      - -f
-      - http://localhost:8811/health
-      timeout: 10s
-    image: mcp/docker:latest
+      test: ["CMD", "curl", "-f", "http://localhost:8811/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     labels:
-    - com.docker.compose.project=mcp
-    - com.docker.compose.service=mcp-server
-    - traefik.enable=true
-    - traefik.http.routers.mcp.rule=Host(`mcp.localhost`)
+      - com.docker.compose.project=mcp
+      - com.docker.compose.service=mcp-server
+      - traefik.enable=true
+      - traefik.http.routers.mcp.rule=Host(`mcp.localhost`)
+      - traefik.http.routers.mcp.middlewares=secured@file
     networks:
-    - mcp-network
+      - mcp-network
     ports:
-    - 8811:8811
-    - 8812:8812
+      - "8811:8811"
+      - "8812:8812"
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     volumes:
-    - ./config.yaml:/app/config.yaml:ro
-    - ./secrets.yaml:/app/secrets.yaml:ro
-    - ./registry.yaml:/app/registry.yaml:ro
-    - mcp-data:/app/data
-    - mcp-logs:/app/logs
-    - mcp-cache:/app/cache
-    - /var/run/docker.sock:/var/run/docker.sock:ro
-    - C:\:/host/c:ro
+      - ./config.yaml:/app/config.yaml:ro
+      - ./registry.yaml:/app/registry.yaml:ro
+      - c:/Users/ofayese/.docker/mcp/secrets:/app/secrets:ro
+      - mcp-data:/app/data
+      - mcp-logs:/app/logs
+      - mcp-cache:/app/cache
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - C:\:/host/c:ro
   traefik:
     container_name: mcp-traefik
     image: traefik:v3.0
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.filename=/etc/traefik/dynamic_conf.yml"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--log.level=INFO"
     labels:
-    - traefik.enable=true
-    - traefik.http.routers.dashboard.rule=Host(`traefik.localhost`)
-    - traefik.http.routers.dashboard.service=api@internal
+      - traefik.enable=true
+      - traefik.http.routers.dashboard.rule=Host(`traefik.localhost`)
+      - traefik.http.routers.dashboard.service=api@internal
+      - traefik.http.routers.dashboard.middlewares=auth@file
     networks:
-    - mcp-network
+      - mcp-network
     ports:
-    - 80:80
-    - 8080:8080
+      - "80:80"
+      - "8080:8080"
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     volumes:
-    - /var/run/docker.sock:/var/run/docker.sock:ro
-    - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik_dynamic.yml:/etc/traefik/dynamic_conf.yml:ro
 volumes:
-  docker-socket:
-    external: true
   mcp-cache:
     driver: local
   mcp-data:
@@ -125,3 +144,9 @@ volumes:
       type: none
   mcp-logs:
     driver: local
+  
+# External named volumes must be created before docker-compose up
+# These are excluded from normal cleanup operations
+# Use 'docker volume rm docker-socket' to manually remove if needed
+  docker-socket:
+    external: true
