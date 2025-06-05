@@ -91,8 +91,8 @@ services:
     networks:
       - mcp-network
     ports:
-      - "8811:8811"
-      - "8812:8812"
+      - "0:8811"
+      - "0:8812"
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -124,11 +124,11 @@ services:
     networks:
       - mcp-network
     ports:
-      - "80:80"
-      - "8080:8080"
+      - "0:80"
+      - "0:8080"
     restart: unless-stopped
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges:false
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yml:/etc/traefik/traefik.yml:ro

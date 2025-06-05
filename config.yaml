@@ -6,7 +6,7 @@
 app:
   name: "dhv01mcp"
   version: "1.0.0"
-  environment: "production"
+  environment: "dev"
 
 # Server configuration
 server:
