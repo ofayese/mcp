@@ -56,8 +56,6 @@ set START_TIME=%TIME%
 :: Script constants
 set "REQUIRED_DIRS=data logs cache init-db secrets"
 set "REQUIRED_VOLUMES=mcp-data mcp-logs mcp-cache dhv01mcp-ssh-config"
-set "MCP_NETWORK=mcp-network"
-set "MCP_SUBNET=192.168.65.0/24"
 set "HEALTH_CHECK_URL=http://localhost:8811/health"
 set "HEALTH_CHECK_TIMEOUT=30"
 
@@ -176,16 +174,18 @@ call :log "INFO" "Running port availability check..."
 if exist "port-scanner.ps1" (
     where pwsh >nul 2>&1
     if %ERRORLEVEL% EQU 0 (
-        pwsh -ExecutionPolicy Bypass -File port-scanner.ps1
+        call :log "INFO" "Using PowerShell Core for port scanning..."
+        pwsh -ExecutionPolicy Bypass -File port-scanner.ps1 -Verbose
     ) else (
-        powershell -ExecutionPolicy Bypass -File port-scanner.ps1
+        call :log "INFO" "Using Windows PowerShell for port scanning..."
+        powershell -ExecutionPolicy Bypass -File port-scanner.ps1 -Verbose
     )
     
     if %ERRORLEVEL% EQU 0 (
         call :log "SUCCESS" "Port scanning completed successfully"
     ) else (
-        call :log "ERROR" "Port scanning failed"
-        exit /b 1
+        call :log "ERROR" "Port scanning failed with exit code %ERRORLEVEL%"
+        call :log "WARNING" "Continuing setup with default ports (some services may conflict)"
     )
 ) else (
     call :log "WARNING" "port-scanner.ps1 not found, skipping dynamic port assignment"
@@ -208,7 +208,7 @@ if exist ".env" (
 :: Check required environment variables
 call :log "INFO" "Checking required environment variables..."
 set "MISSING_VARS="
-set "REQUIRED_VARS=COMPOSE_PROJECT_NAME COMPOSE_FILE MCP_HOST MCP_PORT MCP_NETWORK MCP_SUBNET MCP_DATA_DIR MCP_CACHE_DIR MCP_CONFIG_PATH MCP_SECRETS_PATH MCP_REGISTRY_PATH POSTGRES_DB POSTGRES_USER POSTGRES_PASSWORD REDIS_PASSWORD"
+set "REQUIRED_VARS=COMPOSE_PROJECT_NAME COMPOSE_FILE MCP_HOST MCP_PORT MCP_DATA_DIR MCP_CACHE_DIR MCP_CONFIG_PATH MCP_SECRETS_PATH MCP_REGISTRY_PATH POSTGRES_DB POSTGRES_USER POSTGRES_PASSWORD REDIS_PASSWORD"
 
 for %%v in (%REQUIRED_VARS%) do (
     if not defined %%v (
@@ -296,22 +296,10 @@ for %%v in (%REQUIRED_VOLUMES%) do (
     call :log "SUCCESS" "Force created volume: %%v"
 )
 
-:: Force recreate Docker network
-call :log "INFO" "Setting up Docker network with force recreation..."
-if defined MCP_NETWORK (
-    :: Try to remove existing network first
-    docker network rm %MCP_NETWORK% >nul 2>&1
-    
-    if defined MCP_SUBNET (
-        docker network create --subnet=%MCP_SUBNET% %MCP_NETWORK% >nul
-        call :log "SUCCESS" "Force created network: %MCP_NETWORK% (%MCP_SUBNET%)"
-    ) else (
-        docker network create %MCP_NETWORK% >nul
-        call :log "SUCCESS" "Force created network: %MCP_NETWORK%"
-    )
-) else (
-    call :log "WARNING" "MCP_NETWORK not defined, using default network"
-)
+:: Configure Docker networking (Host networking only)
+call :log "INFO" "Configuring Docker networking..."
+call :log "INFO" "MCP uses Docker host networking mode exclusively"
+call :log "SUCCESS" "Network configuration: localhost (host mode)"
 
 :: Set up secrets from environment variables
 call :log "INFO" "Setting up secrets..."
@@ -365,15 +353,19 @@ call :log "INFO" "Setting up firewall rules..."
 if exist "firewall-manager.ps1" (
     where pwsh >nul 2>&1
     if %ERRORLEVEL% EQU 0 (
+        call :log "INFO" "Using PowerShell Core for firewall management..."
         pwsh -ExecutionPolicy Bypass -File firewall-manager.ps1 -Action enable
     ) else (
+        call :log "INFO" "Using Windows PowerShell for firewall management..."
         powershell -ExecutionPolicy Bypass -File firewall-manager.ps1 -Action enable
     )
     
     if %ERRORLEVEL% EQU 0 (
         call :log "SUCCESS" "Firewall rules configured successfully"
     ) else (
-        call :log "WARNING" "Could not configure firewall rules (may require admin privileges)"
+        call :log "WARNING" "Could not configure firewall rules (exit code %ERRORLEVEL%)"
+        call :log "INFO" "This is normal if not running as Administrator"
+        call :log "INFO" "Firewall rules can be configured manually later"
     )
 ) else (
     call :log "WARNING" "firewall-manager.ps1 not found, skipping firewall setup"
@@ -389,14 +381,24 @@ if "%QUICK_MODE%"=="true" (
 )
 echo.
 
-:: Check which PowerShell to use
+:: Check which PowerShell to use and run configuration
 where pwsh >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
     call :log "INFO" "Using PowerShell Core (pwsh) for configuration..."
-    pwsh -ExecutionPolicy Bypass -File mcpconfig.ps1
+    pwsh -ExecutionPolicy Bypass -File mcpconfig.ps1 -Verbose
+    set "CONFIG_EXIT_CODE=%ERRORLEVEL%"
 ) else (
     call :log "INFO" "Using Windows PowerShell for configuration..."
-    powershell -ExecutionPolicy Bypass -File mcpconfig.ps1
+    powershell -ExecutionPolicy Bypass -File mcpconfig.ps1 -Verbose
+    set "CONFIG_EXIT_CODE=%ERRORLEVEL%"
+)
+
+:: Check configuration result
+if %CONFIG_EXIT_CODE% EQU 0 (
+    call :log "SUCCESS" "MCP configuration completed successfully"
+) else (
+    call :log "ERROR" "MCP configuration failed with exit code %CONFIG_EXIT_CODE%"
+    call :log "WARNING" "Setup may be incomplete, check logs for details"
 )
 
 :: Calculate configuration duration

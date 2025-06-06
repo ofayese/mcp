@@ -187,8 +187,6 @@ function Test-EnvVars {
         "COMPOSE_FILE",
         "MCP_HOST",
         "MCP_PORT",
-        "MCP_NETWORK",
-        "MCP_SUBNET",
         "MCP_DATA_DIR",
         "MCP_CACHE_DIR",
         "MCP_CONFIG_PATH",
@@ -255,8 +253,6 @@ if (Test-Path $envFile) {
         "COMPOSE_FILE" = "docker-compose.yml"
         "MCP_HOST" = "localhost"
         "MCP_PORT" = "8811"
-        "MCP_NETWORK" = "mcp-network"
-        "MCP_SUBNET" = "192.168.65.0/24"
         "MCP_DATA_DIR" = "./data"
         "MCP_CACHE_DIR" = "./cache"
         "MCP_CONFIG_PATH" = "$PSScriptRoot\config.yaml"
@@ -302,33 +298,10 @@ foreach ($volume in $REQUIRED_VOLUMES) {
     }
 }
 
-# Note: Host networking is used, but legacy network may still be needed for some scenarios
-Write-LogMessage "Setting up Docker network (legacy compatibility)..." -Type "INFO"
-$mcpHost = [Environment]::GetEnvironmentVariable("MCP_HOST")
-if ($mcpHost -eq "localhost") {
-    Write-LogMessage "Host networking detected - network creation is optional" -Type "INFO"
-} else {
-    Write-LogMessage "Bridge networking mode - creating network..." -Type "INFO"
-}
-
-try {
-    $null = docker network inspect $MCP_NETWORK 2>$null
-    Write-LogMessage "Network exists: $MCP_NETWORK" -Type "SUCCESS"
-} catch {
-    try {
-        $mcpSubnet = [Environment]::GetEnvironmentVariable("MCP_SUBNET")
-        if ($mcpSubnet) {
-            $null = docker network create --subnet=$mcpSubnet $MCP_NETWORK
-            Write-LogMessage "Created network: $MCP_NETWORK ($mcpSubnet)" -Type "SUCCESS"
-        } else {
-            $null = docker network create $MCP_NETWORK
-            Write-LogMessage "Created network: $MCP_NETWORK" -Type "SUCCESS"
-        }
-    } catch {
-        Write-LogMessage "Warning: Failed to create network: $MCP_NETWORK - $($_.Exception.Message)" -Type "WARNING"
-        Write-LogMessage "Continuing with host networking..." -Type "INFO"
-    }
-}
+# Configure Docker networking (Host networking only)
+Write-LogMessage "Configuring Docker networking..." -Type "INFO"
+Write-LogMessage "MCP uses Docker host networking mode exclusively" -Type "INFO"
+Write-LogMessage "Network configuration: localhost (host mode)" -Type "SUCCESS"
 
 # Always use Docker Compose v2
 $composeCommand = "docker compose"
