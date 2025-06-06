@@ -54,10 +54,14 @@ docker info >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
     echo SUCCESS: Docker is accessible
     
-    :: Check running MCP containers
+:: Check running MCP containers
     for /f "tokens=*" %%a in ('docker ps --filter "name=mcp" --format "{{.Names}}" 2^>nul') do (
         set "CONTAINERS=!CONTAINERS!%%a "
     )
+    
+    :: Also check docker compose status
+    echo INFO: Checking Docker Compose status...
+    docker compose ps --format "table {{.Name}}\t{{.Status}}" 2>nul
     
     if defined CONTAINERS (
         echo SUCCESS: MCP containers running:
@@ -79,7 +83,7 @@ pwsh -Command "try { $r = Invoke-WebRequest -Uri '%METRICS_URL%' -Method Head -U
 
 :: Check Redis if possible
 echo INFO: Checking Redis connection...
-docker exec mcp-redis redis-cli -a "mcp" ping >nul 2>&1
+docker exec mcp-redis redis-cli -a "%REDIS_PASSWORD%" ping >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
     echo SUCCESS: Redis is responsive
 ) else (
@@ -88,7 +92,7 @@ if %ERRORLEVEL% EQU 0 (
 
 :: Check PostgreSQL if possible
 echo INFO: Checking PostgreSQL connection...
-docker exec mcp-postgres pg_isready -U mcp >nul 2>&1
+docker exec mcp-postgres pg_isready -U "%POSTGRES_USER%" >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
     echo SUCCESS: PostgreSQL is responsive
 ) else (

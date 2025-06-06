@@ -105,7 +105,12 @@ Write-Host "└─────────────────────�
 
 # Check PowerShell version
 $psVersion = $PSVersionTable.PSVersion
-Write-LogMessage "PowerShell Version: $($psVersion.Major).$($psVersion.Minor).$($psVersion.Build)" -Type "INFO"
+$psVersionString = "$($psVersion.Major).$($psVersion.Minor)"
+# Add Build number if available
+if ($null -ne $psVersion.Build) {
+    $psVersionString += ".$($psVersion.Build)"
+}
+Write-LogMessage "PowerShell Version: $psVersionString" -Type "INFO"
 
 # Check Docker availability
 if (-not (Test-CommandExists "docker")) {
@@ -269,22 +274,14 @@ try {
     }
 }
 
-# Check for docker-compose availability
-if (-not (Test-CommandExists "docker-compose") -and -not (Test-CommandExists "docker" "compose")) {
-    Write-LogMessage "docker-compose is not available. Attempting to use 'docker compose' instead." -Type "WARNING"
-    $composeCommand = "docker compose"
-} else {
-    $composeCommand = "docker-compose"
-}
+# Always use Docker Compose v2
+$composeCommand = "docker compose"
+Write-LogMessage "Using Docker Compose v2" -Type "INFO"
 
 # Pull images before starting
 Write-LogMessage "Pulling Docker images (this may take a few minutes)..." -Type "INFO"
 try {
-    if ($composeCommand -eq "docker-compose") {
-        Invoke-Expression "docker-compose pull" | Out-Null
-    } else {
-        Invoke-Expression "docker compose pull" | Out-Null
-    }
+    Invoke-Expression "docker compose pull" | Out-Null
     Write-LogMessage "Images pulled successfully" -Type "SUCCESS"
 } catch {
     Write-LogMessage "Warning: Some images could not be pulled. Continuing with local images if available." -Type "WARNING"
@@ -293,11 +290,7 @@ try {
 # Start Docker Compose
 Write-LogMessage "Starting services with Docker Compose..." -Type "INFO"
 try {
-    if ($composeCommand -eq "docker-compose") {
-        Invoke-Expression "docker-compose up -d" | Out-Null
-    } else {
-        Invoke-Expression "docker compose up -d" | Out-Null
-    }
+    Invoke-Expression "docker compose up -d --force-recreate" | Out-Null
     Write-LogMessage "Services started successfully" -Type "SUCCESS"
 } catch {
     Write-LogMessage "Failed to start services: $($_.Exception.Message)" -Type "ERROR"

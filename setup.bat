@@ -112,19 +112,14 @@ if errorlevel 1 (
     call :log "SUCCESS" "Docker is running"
 )
 
-:: Verify Docker Compose is available
-where docker-compose > nul 2>&1
+:: Verify Docker Compose v2 is available
+docker compose version > nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
-    call :log "INFO" "Checking for Docker Compose plugin..."
-    docker compose version > nul 2>&1
-    if %ERRORLEVEL% NEQ 0 (
-        call :log "WARNING" "Neither docker-compose nor Docker Compose plugin found."
-        call :log "WARNING" "MCP setup may fail if Docker Compose is not available."
-    ) else (
-        call :log "INFO" "Docker Compose plugin is available."
-    )
+    call :log "ERROR" "Docker Compose v2 plugin not found."
+    call :log "ERROR" "Please ensure Docker Compose v2 is installed."
+    exit /b 1
 ) else (
-    call :log "SUCCESS" "docker-compose is available."
+    call :log "SUCCESS" "Docker Compose v2 is available."
 )
 
 :: Prompt for confirmation in full mode
@@ -199,32 +194,32 @@ for %%d in (%REQUIRED_DIRS%) do (
     )
 )
 
-:: Create Docker volumes
-call :log "INFO" "Setting up Docker volumes..."
+:: Stop any running MCP containers
+call :log "INFO" "Stopping any running MCP containers..."
+docker compose down >nul 2>&1
+call :log "SUCCESS" "Stopped any running containers"
+
+:: Force recreate Docker volumes
+call :log "INFO" "Setting up Docker volumes with force recreation..."
 for %%v in (%REQUIRED_VOLUMES%) do (
-    docker volume inspect %%v >nul 2>&1
-    if errorlevel 1 (
-        docker volume create %%v >nul
-        call :log "SUCCESS" "Created volume: %%v"
-    ) else (
-        call :log "SUCCESS" "Volume exists: %%v"
-    )
+    :: Try to remove existing volume first
+    docker volume rm %%v >nul 2>&1
+    docker volume create %%v >nul
+    call :log "SUCCESS" "Force created volume: %%v"
 )
 
-:: Create Docker network if not exists
-call :log "INFO" "Setting up Docker network..."
+:: Force recreate Docker network
+call :log "INFO" "Setting up Docker network with force recreation..."
 if defined MCP_NETWORK (
-    docker network inspect %MCP_NETWORK% >nul 2>&1
-    if errorlevel 1 (
-        if defined MCP_SUBNET (
-            docker network create --subnet=%MCP_SUBNET% %MCP_NETWORK% >nul
-            call :log "SUCCESS" "Created network: %MCP_NETWORK% (%MCP_SUBNET%)"
-        ) else (
-            docker network create %MCP_NETWORK% >nul
-            call :log "SUCCESS" "Created network: %MCP_NETWORK%"
-        )
+    :: Try to remove existing network first
+    docker network rm %MCP_NETWORK% >nul 2>&1
+    
+    if defined MCP_SUBNET (
+        docker network create --subnet=%MCP_SUBNET% %MCP_NETWORK% >nul
+        call :log "SUCCESS" "Force created network: %MCP_NETWORK% (%MCP_SUBNET%)"
     ) else (
-        call :log "SUCCESS" "Network exists: %MCP_NETWORK%"
+        docker network create %MCP_NETWORK% >nul
+        call :log "SUCCESS" "Force created network: %MCP_NETWORK%"
     )
 ) else (
     call :log "WARNING" "MCP_NETWORK not defined, using default network"
@@ -290,8 +285,10 @@ echo.
 :: Check which PowerShell to use
 where pwsh >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
+    call :log "INFO" "Using PowerShell Core (pwsh) for configuration..."
     pwsh -ExecutionPolicy Bypass -File mcpconfig.ps1
 ) else (
+    call :log "INFO" "Using Windows PowerShell for configuration..."
     powershell -ExecutionPolicy Bypass -File mcpconfig.ps1
 )
 

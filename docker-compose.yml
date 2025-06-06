@@ -1,7 +1,9 @@
 # MCP Docker Compose Configuration
 # Updated: June 2025
+# Docker Compose v2 modern format
 
-version: "3.8"  # Explicit version specification
+# Explicit version not required with Docker Compose v2, but included for compatibility
+version: "3.9"
 
 networks:
   mcp-network:
@@ -53,7 +55,7 @@ services:
     volumes:
       - mcp-cache:/data
   mcp-server:
-    container_name: dhv01mcp
+    container_name: mcp-server
     image: mcp/docker:latest
     depends_on:
       mcp-redis:
@@ -137,11 +139,11 @@ services:
   socat-client:
     image: alpine/socat
     container_name: socat-client
-    command: STDIO TCP:dhv01mcp:8811
+    command: STDIO TCP:mcp-server:8811
     stdin_open: true
     tty: true
     depends_on:
-      - dhv01mcp
+      - mcp-server
     networks:
       - mcp-network
 volumes:
