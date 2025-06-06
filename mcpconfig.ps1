@@ -16,12 +16,10 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 # Script constants
-$SCRIPT_VERSION = "1.2.0"
+$SCRIPT_VERSION = "1.3.0"
 $MIN_DOCKER_VERSION = "20.10.0"
 $REQUIRED_DIRS = @("data", "logs", "cache", "init-db", "secrets")
-$REQUIRED_VOLUMES = @("mcp-data", "mcp-logs", "mcp-cache")
-$MCP_NETWORK = "mcp-network"
-$MCP_SUBNET = "172.40.1.0/24"
+$REQUIRED_VOLUMES = @("mcp-data", "mcp-logs", "mcp-cache", "dhv01mcp-ssh-config")
 $HEALTH_CHECK_URL = "http://localhost:8811/health"
 $HEALTH_CHECK_TIMEOUT = 30  # seconds
 
@@ -255,10 +253,10 @@ if (Test-Path $envFile) {
     $defaults = @{
         "COMPOSE_PROJECT_NAME" = "mcp"
         "COMPOSE_FILE" = "docker-compose.yml"
-        "MCP_HOST" = "0.0.0.0"
+        "MCP_HOST" = "localhost"
         "MCP_PORT" = "8811"
         "MCP_NETWORK" = "mcp-network"
-        "MCP_SUBNET" = "172.40.1.0/24"
+        "MCP_SUBNET" = "192.168.65.0/24"
         "MCP_DATA_DIR" = "./data"
         "MCP_CACHE_DIR" = "./cache"
         "MCP_CONFIG_PATH" = "$PSScriptRoot\config.yaml"
@@ -268,6 +266,9 @@ if (Test-Path $envFile) {
         "POSTGRES_USER" = "mcp"
         "POSTGRES_PASSWORD" = "mcp_password"
         "REDIS_PASSWORD" = "mcp"
+        "SSH_ENABLED" = "true"
+        "SSH_GATEWAY_PORT" = "2222"
+        "SSH_KEY_PATH" = "C:\Users\ofayese\.ssh"
     }
     
     foreach ($key in $defaults.Keys) {
@@ -301,18 +302,31 @@ foreach ($volume in $REQUIRED_VOLUMES) {
     }
 }
 
-# Create network if not exists
-Write-LogMessage "Setting up Docker network..." -Type "INFO"
+# Note: Host networking is used, but legacy network may still be needed for some scenarios
+Write-LogMessage "Setting up Docker network (legacy compatibility)..." -Type "INFO"
+$mcpHost = [Environment]::GetEnvironmentVariable("MCP_HOST")
+if ($mcpHost -eq "localhost") {
+    Write-LogMessage "Host networking detected - network creation is optional" -Type "INFO"
+} else {
+    Write-LogMessage "Bridge networking mode - creating network..." -Type "INFO"
+}
+
 try {
     $null = docker network inspect $MCP_NETWORK 2>$null
     Write-LogMessage "Network exists: $MCP_NETWORK" -Type "SUCCESS"
 } catch {
     try {
-        $null = docker network create --subnet=$MCP_SUBNET $MCP_NETWORK
-        Write-LogMessage "Created network: $MCP_NETWORK ($MCP_SUBNET)" -Type "SUCCESS"
+        $mcpSubnet = [Environment]::GetEnvironmentVariable("MCP_SUBNET")
+        if ($mcpSubnet) {
+            $null = docker network create --subnet=$mcpSubnet $MCP_NETWORK
+            Write-LogMessage "Created network: $MCP_NETWORK ($mcpSubnet)" -Type "SUCCESS"
+        } else {
+            $null = docker network create $MCP_NETWORK
+            Write-LogMessage "Created network: $MCP_NETWORK" -Type "SUCCESS"
+        }
     } catch {
-        Write-LogMessage "Failed to create network: $MCP_NETWORK - $($_.Exception.Message)" -Type "ERROR"
-        exit 1
+        Write-LogMessage "Warning: Failed to create network: $MCP_NETWORK - $($_.Exception.Message)" -Type "WARNING"
+        Write-LogMessage "Continuing with host networking..." -Type "INFO"
     }
 }
 
@@ -367,21 +381,25 @@ if ($healthy) {
     Write-LogMessage "MCP Server is healthy! (Time: $([math]::Round($healthCheckTimer.Elapsed.TotalSeconds, 1))s)" -Type "SUCCESS"
 } else {
     Write-LogMessage "MCP Server did not respond within timeout period ($HEALTH_CHECK_TIMEOUT seconds)" -Type "WARNING"
-    Write-LogMessage "Run 'health-check.bat' to troubleshoot or check container logs with 'docker logs mcp-server'" -Type "INFO"
+    Write-LogMessage "Run 'health-check.bat' to troubleshoot or check container logs with 'docker logs dhv01mcp'" -Type "INFO"
 }
 
 # Display service info
 Write-LogMessage "Checking service status..." -Type "INFO"
 try {
-    $containers = docker ps --filter "name=mcp" --format "{{.Names}}: {{.Status}}"
+    $containers = docker ps --filter "name=dhv01mcp" --format "{{.Names}}: {{.Status}}"
     
     Write-Host "`nService Status:" -ForegroundColor Cyan
-    $containers -split "`n" | ForEach-Object {
-        if ($_ -match "Up ") {
-            Write-Host "  ✅ $_" -ForegroundColor Green
-        } else {
-            Write-Host "  ❌ $_" -ForegroundColor Red
+    if ($containers) {
+        $containers -split "`n" | ForEach-Object {
+            if ($_ -and $_ -match "Up ") {
+                Write-Host "  ✅ $_" -ForegroundColor Green
+            } elseif ($_) {
+                Write-Host "  ❌ $_" -ForegroundColor Red
+            }
         }
+    } else {
+        Write-LogMessage "No dhv01mcp containers found running" -Type "WARNING"
     }
 } catch {
     Write-LogMessage "Could not retrieve container status" -Type "WARNING"
@@ -401,4 +419,4 @@ if (-not $healthy) {
     Write-Host "`nNOTE: MCP may still be initializing. Run 'health-check.bat' to verify status." -ForegroundColor Yellow
 }
 
-Write-Host "`nFor troubleshooting, use: 'docker logs mcp-server'" -ForegroundColor Cyan
+Write-Host "`nFor troubleshooting, use: 'docker logs dhv01mcp'" -ForegroundColor Cyan

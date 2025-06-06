@@ -55,9 +55,9 @@ set START_TIME=%TIME%
 
 :: Script constants
 set "REQUIRED_DIRS=data logs cache init-db secrets"
-set "REQUIRED_VOLUMES=mcp-data mcp-logs mcp-cache"
+set "REQUIRED_VOLUMES=mcp-data mcp-logs mcp-cache dhv01mcp-ssh-config"
 set "MCP_NETWORK=mcp-network"
-set "MCP_SUBNET=172.40.1.0/24"
+set "MCP_SUBNET=192.168.65.0/24"
 set "HEALTH_CHECK_URL=http://localhost:8811/health"
 set "HEALTH_CHECK_TIMEOUT=30"
 
