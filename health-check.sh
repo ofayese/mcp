@@ -144,24 +144,55 @@ check_docker() {
     return 0
   fi
   
+  # First check current Docker context
+  local docker_context=""
+  if docker context ls &>/dev/null; then
+    docker_context=$(docker context ls --format "{{.Name}} {{.Current}}" | grep "true" | awk '{print $1}')
+    if [ -n "$docker_context" ]; then
+      log_info "Current Docker context: $docker_context"
+    fi
+  fi
+  
+  # Try standard docker info check first
   if docker info &> /dev/null; then
     log_success "Docker is accessible"
-    # Check if MCP containers are running
-    local mcp_containers
-    mcp_containers=$(docker ps --filter "name=mcp" --format "{{.Names}}" 2>/dev/null || echo "")
-    if [ -n "$mcp_containers" ]; then
-      log_success "MCP containers running:"
-      echo "$mcp_containers" | while read -r container; do
-        echo "  - $container"
-      done
-    else
-      log_warn "No MCP containers found running"
-    fi
-    return 0
   else
-    log_error "Docker is not accessible"
-    return 1
+    # If that fails, try with desktop-linux context
+    if [ "$docker_context" != "desktop-linux" ] && docker context use desktop-linux &>/dev/null; then
+      if docker info &> /dev/null; then
+        log_success "Docker is accessible in desktop-linux context"
+      else
+        # Try docker ps as a fallback check
+        if docker ps &> /dev/null; then
+          log_success "Docker is accessible (limited info)"
+        else
+          log_error "Docker is not accessible"
+          return 1
+        fi
+      fi
+    else
+      # Try docker ps as a fallback check
+      if docker ps &> /dev/null; then
+        log_success "Docker is accessible (limited info)"
+      else
+        log_error "Docker is not accessible"
+        return 1
+      fi
+    fi
   fi
+  
+  # Check if MCP containers are running
+  local mcp_containers
+  mcp_containers=$(docker ps --filter "name=mcp" --format "{{.Names}}" 2>/dev/null || echo "")
+  if [ -n "$mcp_containers" ]; then
+    log_success "MCP containers running:"
+    echo "$mcp_containers" | while read -r container; do
+      echo "  - $container"
+    done
+  else
+    log_warn "No MCP containers found running"
+  fi
+  return 0
 }
 
 # Check MCP tools

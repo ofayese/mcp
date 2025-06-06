@@ -105,42 +105,18 @@ compare_versions() {
   local version1=$1
   local version2=$2
   
-  # Remove any non-numeric prefix/suffix
-  version1=$(echo "$version1" | sed -E 's/[^0-9.].*$//')
-  version2=$(echo "$version2" | sed -E 's/[^0-9.].*$//')
-  
-  if [[ "$version1" == "$version2" ]]; then
+  # Use sort -V for version comparison
+  # Sort both versions and check if the minimum version comes first
+  if [ "$(printf '%s\n' "$version1" "$version2" | sort -V | head -n1)" = "$version2" ]; then
+    # version1 >= version2
+    return 1
+  elif [ "$version1" = "$version2" ]; then
+    # version1 = version2
     return 0
+  else
+    # version1 < version2
+    return 2
   fi
-  
-  local IFS=.
-  local i ver1=($version1) ver2=($version2)
-  
-  # Fill empty fields with zeros
-  for ((i=${#ver1[@]}; i<${#ver2[@]}; i++)); do
-    ver1[i]=0
-  done
-  for ((i=${#ver2[@]}; i<${#ver1[@]}; i++)); do
-    ver2[i]=0
-  done
-  
-  # Compare version numbers
-  for ((i=0; i<${#ver1[@]}; i++)); do
-    if [[ -z ${ver2[i]} ]]; then
-      # If ver2 is shorter, and ver1 still has elements, ver1 is greater
-      return 1
-    fi
-    
-    if ((10#${ver1[i]} > 10#${ver2[i]})); then
-      return 1
-    fi
-    
-    if ((10#${ver1[i]} < 10#${ver2[i]})); then
-      return 2
-    fi
-  done
-  
-  return 0
 }
 
 create_secure_directory() {

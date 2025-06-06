@@ -107,7 +107,7 @@ Write-Host "└─────────────────────�
 $psVersion = $PSVersionTable.PSVersion
 $psVersionString = "$($psVersion.Major).$($psVersion.Minor)"
 # Add Build number if available
-if ($null -ne $psVersion.Build) {
+if ($psVersion.PSObject.Properties.Name -contains "Build" -and $null -ne $psVersion.Build) {
     $psVersionString += ".$($psVersion.Build)"
 }
 Write-LogMessage "PowerShell Version: $psVersionString" -Type "INFO"

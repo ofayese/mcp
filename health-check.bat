@@ -105,7 +105,9 @@ docker compose ps --format "table {{.Name}}\t{{.Status}}" 2>nul
 
 if defined CONTAINERS (
     echo SUCCESS: MCP containers running:
-    for %%a in (%CONTAINERS%) do echo   - %%a
+    for %%a in (%CONTAINERS%) do (
+        echo   - %%a
+    )
 ) else (
     echo WARNING: No MCP containers found running
 )
