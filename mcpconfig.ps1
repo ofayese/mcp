@@ -140,7 +140,7 @@ try {
 }
 
 # Function to check if required environment variables are set
-function Check-EnvVars {
+function Test-EnvVars {
     Write-LogMessage "🔍 Checking required environment variables..." -Type "INFO"
     $required = @(
         "COMPOSE_PROJECT_NAME",
@@ -205,7 +205,7 @@ if (Test-Path $envFile) {
     Write-LogMessage "Loaded $envCount environment variables" -Type "SUCCESS"
     
     # Validate required environment variables
-    Check-EnvVars
+    Test-EnvVars
 } else {
     Write-LogMessage ".env file not found. Using default values." -Type "WARNING"
     
@@ -281,7 +281,7 @@ Write-LogMessage "Using Docker Compose v2" -Type "INFO"
 # Pull images before starting
 Write-LogMessage "Pulling Docker images (this may take a few minutes)..." -Type "INFO"
 try {
-    Invoke-Expression "docker compose pull" | Out-Null
+    Invoke-Expression "$composeCommand pull" | Out-Null
     Write-LogMessage "Images pulled successfully" -Type "SUCCESS"
 } catch {
     Write-LogMessage "Warning: Some images could not be pulled. Continuing with local images if available." -Type "WARNING"
@@ -290,7 +290,7 @@ try {
 # Start Docker Compose
 Write-LogMessage "Starting services with Docker Compose..." -Type "INFO"
 try {
-    Invoke-Expression "docker compose up -d --force-recreate" | Out-Null
+    Invoke-Expression "$composeCommand up -d --force-recreate" | Out-Null
     Write-LogMessage "Services started successfully" -Type "SUCCESS"
 } catch {
     Write-LogMessage "Failed to start services: $($_.Exception.Message)" -Type "ERROR"
