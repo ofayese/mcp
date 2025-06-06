@@ -171,6 +171,26 @@ if "%QUICK_MODE%"=="false" (
     )
 )
 
+:: Run port scanning and dynamic assignment
+call :log "INFO" "Running port availability check..."
+if exist "port-scanner.ps1" (
+    where pwsh >nul 2>&1
+    if %ERRORLEVEL% EQU 0 (
+        pwsh -ExecutionPolicy Bypass -File port-scanner.ps1
+    ) else (
+        powershell -ExecutionPolicy Bypass -File port-scanner.ps1
+    )
+    
+    if %ERRORLEVEL% EQU 0 (
+        call :log "SUCCESS" "Port scanning completed successfully"
+    ) else (
+        call :log "ERROR" "Port scanning failed"
+        exit /b 1
+    )
+) else (
+    call :log "WARNING" "port-scanner.ps1 not found, skipping dynamic port assignment"
+)
+
 :: Load .env file into environment
 if exist ".env" (
     call :log "INFO" "Loading environment variables from .env"
@@ -222,6 +242,43 @@ for %%d in (%REQUIRED_DIRS%) do (
         )
     ) else (
         call :log "SUCCESS" "Directory exists: %%d"
+    )
+)
+
+:: Set up SSH configuration if enabled
+if defined SSH_ENABLED (
+    if /i "%SSH_ENABLED%"=="true" (
+        call :log "INFO" "Setting up SSH remote access..."
+        
+        :: Check if SSH key directory exists
+        if defined SSH_KEY_PATH (
+            if not exist "%SSH_KEY_PATH%" (
+                call :log "INFO" "Creating SSH key directory: %SSH_KEY_PATH%"
+                mkdir "%SSH_KEY_PATH%" 2>nul
+                
+                :: Set secure permissions for SSH directory
+                icacls "%SSH_KEY_PATH%" /inheritance:r /grant:r "%USERNAME%:(OI)(CI)(F)" >nul
+                if errorlevel 0 (
+                    call :log "SUCCESS" "Created and secured SSH key directory"
+                ) else (
+                    call :log "WARNING" "Could not set secure permissions on SSH directory"
+                )
+            ) else (
+                call :log "SUCCESS" "SSH key directory exists: %SSH_KEY_PATH%"
+            )
+            
+            :: Check for existing SSH keys
+            if exist "%SSH_KEY_PATH%\*.pub" (
+                call :log "SUCCESS" "SSH public keys found in %SSH_KEY_PATH%"
+            ) else (
+                call :log "WARNING" "No SSH public keys found. Remote access may not work."
+                call :log "INFO" "Generate SSH keys with: ssh-keygen -t rsa -b 4096"
+            )
+        ) else (
+            call :log "WARNING" "SSH_KEY_PATH not defined, using default location"
+        )
+    ) else (
+        call :log "INFO" "SSH remote access is disabled"
     )
 )
 
@@ -302,6 +359,25 @@ if defined POSTGRES_PASSWORD (
 )
 
 call :log "INFO" "Secrets setup complete"
+
+:: Set up firewall rules
+call :log "INFO" "Setting up firewall rules..."
+if exist "firewall-manager.ps1" (
+    where pwsh >nul 2>&1
+    if %ERRORLEVEL% EQU 0 (
+        pwsh -ExecutionPolicy Bypass -File firewall-manager.ps1 -Action enable
+    ) else (
+        powershell -ExecutionPolicy Bypass -File firewall-manager.ps1 -Action enable
+    )
+    
+    if %ERRORLEVEL% EQU 0 (
+        call :log "SUCCESS" "Firewall rules configured successfully"
+    ) else (
+        call :log "WARNING" "Could not configure firewall rules (may require admin privileges)"
+    )
+) else (
+    call :log "WARNING" "firewall-manager.ps1 not found, skipping firewall setup"
+)
 
 :: Run the PowerShell configuration script
 echo.

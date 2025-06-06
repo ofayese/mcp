@@ -95,7 +95,7 @@ if not errorlevel 1 (
 
 :docker_check_containers
 :: Check running MCP containers
-for /f "tokens=*" %%a in ('docker ps --filter "name=mcp" --format "{{.Names}}" 2^>nul') do (
+for /f "tokens=*" %%a in ('docker ps --filter "name=dhv01mcp" --format "{{.Names}}" 2^>nul') do (
     set "CONTAINERS=!CONTAINERS!%%a "
 )
 
@@ -129,7 +129,7 @@ pwsh -Command "try { $r = Invoke-WebRequest -Uri '%METRICS_URL%' -Method Head -U
 
 :: Check Redis if possible
 echo INFO: Checking Redis connection...
-docker exec mcp-redis redis-cli -a "%REDIS_PASSWORD%" ping >nul 2>&1
+docker exec dhv01mcp-redis redis-cli -a "%REDIS_PASSWORD%" ping >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
     echo SUCCESS: Redis is responsive
 ) else (
@@ -138,11 +138,51 @@ if %ERRORLEVEL% EQU 0 (
 
 :: Check PostgreSQL if possible
 echo INFO: Checking PostgreSQL connection...
-docker exec mcp-postgres pg_isready -U "%POSTGRES_USER%" >nul 2>&1
+docker exec dhv01mcp-postgres pg_isready -U "%POSTGRES_USER%" >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
     echo SUCCESS: PostgreSQL is responsive
 ) else (
     echo WARNING: PostgreSQL check failed ^(may not be directly accessible^)
+)
+
+:: Check SSH Gateway if enabled
+if defined SSH_ENABLED (
+    if /i "%SSH_ENABLED%"=="true" (
+        echo INFO: Checking SSH Gateway connection...
+        
+        :: Check if SSH gateway container is running
+        docker ps --filter "name=dhv01mcp-ssh-gateway" --format "{{.Names}}" >nul 2>&1
+        if %ERRORLEVEL% EQU 0 (
+            :: Test SSH port connectivity
+            pwsh -Command "Test-NetConnection -ComputerName localhost -Port ${SSH_GATEWAY_PORT:-2222} -InformationLevel Quiet" >nul 2>&1
+            if %ERRORLEVEL% EQU 0 (
+                echo SUCCESS: SSH Gateway is accessible on port %SSH_GATEWAY_PORT%
+            ) else (
+                echo WARNING: SSH Gateway port %SSH_GATEWAY_PORT% is not responding
+            )
+            
+            :: Check SSH service logs for any issues
+            docker logs dhv01mcp-ssh-gateway --tail 5 2>&1 | findstr /i "error\|failed\|denied" >nul
+            if %ERRORLEVEL% EQU 0 (
+                echo WARNING: SSH Gateway has reported errors in recent logs
+            ) else (
+                echo SUCCESS: SSH Gateway logs show no recent errors
+            )
+        ) else (
+            echo WARNING: SSH Gateway container is not running
+        )
+        
+        :: Check SSH key availability
+        if defined SSH_KEY_PATH (
+            if exist "%SSH_KEY_PATH%\*.pub" (
+                echo SUCCESS: SSH public keys are available
+            ) else (
+                echo WARNING: No SSH public keys found in %SSH_KEY_PATH%
+            )
+        )
+    ) else (
+        echo INFO: SSH remote access is disabled
+    )
 )
 
 echo.

@@ -10,7 +10,7 @@ app:
 
 # Server configuration
 server:
-  host: "0.0.0.0"
+  host: "localhost"
   port: 8811
   timeout: 30s
   max_connections: 100
