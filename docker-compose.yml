@@ -11,6 +11,7 @@ networks:
       config:
       - subnet: 172.40.1.0/24
 services:
+
   mcp-postgres:
     container_name: mcp-postgres
     image: postgres:16-alpine
@@ -91,8 +92,8 @@ services:
     networks:
       - mcp-network
     ports:
-      - "0:8811"
-      - "0:8812"
+      - "8811:8811"
+      - "8812:8812"
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -124,15 +125,25 @@ services:
     networks:
       - mcp-network
     ports:
-      - "0:80"
-      - "0:8080"
+      - "80:80"
+      - "8080:8080"
     restart: unless-stopped
     security_opt:
-      - no-new-privileges:false
+      - no-new-privileges:true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yml:/etc/traefik/traefik.yml:ro
       - ./traefik_dynamic.yml:/etc/traefik/dynamic_conf.yml:ro
+  socat-client:
+    image: alpine/socat
+    container_name: socat-client
+    command: STDIO TCP:dhv01mcp:8811
+    stdin_open: true
+    tty: true
+    depends_on:
+      - dhv01mcp
+    networks:
+      - mcp-network
 volumes:
   mcp-cache:
     driver: local
@@ -150,3 +161,4 @@ volumes:
 # Use 'docker volume rm docker-socket' to manually remove if needed
   docker-socket:
     external: true
+      - mcp-network
