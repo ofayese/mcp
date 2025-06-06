@@ -161,4 +161,3 @@ volumes:
 # Use 'docker volume rm docker-socket' to manually remove if needed
   docker-socket:
     external: true
-      - mcp-network

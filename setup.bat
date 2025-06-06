@@ -82,7 +82,7 @@ echo [%~1] %~2
 goto :eof
 
 :: Check PowerShell version
-powershell -Command "$Host.Version.Major" > temp.txt
+pwsh -Command "$Host.Version.Major" > temp.txt
 set /p PS_VERSION=<temp.txt
 del temp.txt
 
@@ -277,7 +277,7 @@ if "%QUICK_MODE%"=="true" (
 )
 echo.
 
-powershell -ExecutionPolicy Bypass -File mcpconfig.ps1
+pwsh -ExecutionPolicy Bypass -File mcpconfig.ps1
 
 :: Calculate configuration duration
 for /F "tokens=1-4 delims=:.," %%a in ("%START_TIME%") do (
@@ -309,7 +309,7 @@ echo Access Points:
 echo  • MCP Server: http://localhost:8811
 echo  • Traefik Dashboard: http://localhost:8080
 echo.
-echo For troubleshooting, use: 'docker logs mcp-server'
+echo For troubleshooting, use: 'docker logs dhv01mcp'
 echo.
 
 if "%QUICK_MODE%"=="false" (

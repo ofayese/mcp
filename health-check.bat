@@ -36,16 +36,16 @@ echo.
 echo INFO: Environment: MCP_HOST=%MCP_HOST%, MCP_PORT=%MCP_PORT%
 echo.
 
-:: Check if PowerShell is available
-where powershell >nul 2>&1
+:: Check if PowerShell Core is available
+where pwsh >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: PowerShell is required but not installed.
+    echo ERROR: PowerShell Core (pwsh) is required but not installed.
     exit /b 1
 )
 
 :: Check MCP server health
 echo INFO: Checking MCP server health at %HEALTH_URL%...
-powershell -Command "try { $r = Invoke-WebRequest -Uri '%HEALTH_URL%' -UseBasicParsing; if ($r.StatusCode -eq 200) { Write-Host 'SUCCESS: MCP server is healthy'; Write-Host ('  Response: ' + $r.Content); exit 0 } else { Write-Host 'ERROR: MCP server returned status: ' $r.StatusCode; exit 1 } } catch { Write-Host 'ERROR: MCP server not responding'; Write-Host ('  Error: ' + $_.Exception.Message); exit 1 }"
+pwsh -Command "try { $r = Invoke-WebRequest -Uri '%HEALTH_URL%' -UseBasicParsing; if ($r.StatusCode -eq 200) { Write-Host 'SUCCESS: MCP server is healthy'; Write-Host ('  Response: ' + $r.Content); exit 0 } else { Write-Host 'ERROR: MCP server returned status: ' $r.StatusCode; exit 1 } } catch { Write-Host 'ERROR: MCP server not responding'; Write-Host ('  Error: ' + $_.Exception.Message); exit 1 }"
 set HEALTH_CHECK=%ERRORLEVEL%
 
 :: Check Docker connectivity
@@ -71,11 +71,11 @@ if %ERRORLEVEL% EQU 0 (
 
 :: Check MCP tools endpoint
 echo INFO: Checking MCP tools at %TOOLS_URL%...
-powershell -Command "try { $r = Invoke-WebRequest -Uri '%TOOLS_URL%' -UseBasicParsing; if ($r.StatusCode -eq 200) { Write-Host 'SUCCESS: MCP tools are accessible'; Write-Host ('  Tools available: ' + ($r.Content | Select-String -Pattern '\"name\"' -AllMatches).Matches.Count); exit 0 } else { exit 1 } } catch { Write-Host 'WARNING: MCP tools endpoint not available'; exit 1 }"
+pwsh -Command "try { $r = Invoke-WebRequest -Uri '%TOOLS_URL%' -UseBasicParsing; if ($r.StatusCode -eq 200) { Write-Host 'SUCCESS: MCP tools are accessible'; Write-Host ('  Tools available: ' + ($r.Content | Select-String -Pattern '\"name\"' -AllMatches).Matches.Count); exit 0 } else { exit 1 } } catch { Write-Host 'WARNING: MCP tools endpoint not available'; exit 1 }"
 
 :: Check MCP metrics endpoint
 echo INFO: Checking MCP metrics at %METRICS_URL%...
-powershell -Command "try { $r = Invoke-WebRequest -Uri '%METRICS_URL%' -Method Head -UseBasicParsing; if ($r.StatusCode -eq 200) { Write-Host 'SUCCESS: MCP metrics endpoint is accessible'; exit 0 } else { exit 1 } } catch { Write-Host 'WARNING: MCP metrics endpoint not available'; exit 1 }"
+pwsh -Command "try { $r = Invoke-WebRequest -Uri '%METRICS_URL%' -Method Head -UseBasicParsing; if ($r.StatusCode -eq 200) { Write-Host 'SUCCESS: MCP metrics endpoint is accessible'; exit 0 } else { exit 1 } } catch { Write-Host 'WARNING: MCP metrics endpoint not available'; exit 1 }"
 
 :: Check Redis if possible
 echo INFO: Checking Redis connection...
