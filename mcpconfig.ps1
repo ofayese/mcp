@@ -119,17 +119,59 @@ if (-not (Test-CommandExists "docker")) {
     exit 1
 }
 
+# Check Docker contexts and detect current context
+$currentContext = $null
 try {
+    $contextInfo = docker context ls --format "{{.Name}} {{.Current}}" 2>$null
+    if ($contextInfo) {
+        foreach ($line in $contextInfo -split "`n") {
+            if ($line -match "true") {
+                $currentContext = ($line -split " ")[0]
+                Write-LogMessage "Current Docker context: $currentContext" -Type "INFO"
+                break
+            }
+        }
+    }
+} catch {
+    # Continue with default context if we can't detect
+}
+
+try {
+    # First try with the current context
     $dockerVersionOutput = docker version --format "{{.Server.Version}}" 2>$null
+    
+    # If that fails, try with desktop-linux context
+    if (-not $dockerVersionOutput -and $currentContext -ne "desktop-linux") {
+        Write-LogMessage "Trying with desktop-linux context..." -Type "INFO"
+        $contextSwitchResult = docker context use desktop-linux 2>$null
+        if ($contextSwitchResult) {
+            $dockerVersionOutput = docker version --format "{{.Server.Version}}" 2>$null
+            if ($dockerVersionOutput) {
+                Write-LogMessage "Successfully connected using desktop-linux context" -Type "SUCCESS"
+            }
+        }
+    }
+    
+    # Fallback to parsing from docker version output
     if (-not $dockerVersionOutput) {
         $dockerVersionOutput = (docker version | Select-String -Pattern "Server: Docker Engine") -replace "Server: Docker Engine",""
     }
-    $dockerVersion = $dockerVersionOutput.Trim()
     
+    # If we still don't have a version, try one more check with docker ps
+    if (-not $dockerVersionOutput) {
+        docker ps > $null 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            $dockerVersionOutput = "Unknown"
+        } else {
+            throw "Docker is not running"
+        }
+    }
+    
+    $dockerVersion = $dockerVersionOutput.Trim()
     Write-LogMessage "Docker is available (v$dockerVersion)" -Type "SUCCESS"
     
     # Check minimum Docker version
-    if ((Compare-Versions -Version1 $dockerVersion -Version2 $MIN_DOCKER_VERSION) -lt 0) {
+    if ($dockerVersion -ne "Unknown" -and (Compare-Versions -Version1 $dockerVersion -Version2 $MIN_DOCKER_VERSION) -lt 0) {
         Write-LogMessage "Docker version $dockerVersion is below minimum required version $MIN_DOCKER_VERSION" -Type "WARNING"
         Write-LogMessage "Some features may not work correctly. Consider upgrading Docker." -Type "WARNING"
     }

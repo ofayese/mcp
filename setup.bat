@@ -104,12 +104,43 @@ if %PS_VERSION% LSS 5 (
 
 :: Check Docker availability
 call :log "INFO" "Checking Docker status..."
+:: First, list Docker contexts to see what's available
+for /f "tokens=*" %%c in ('docker context ls --format "{{.Name}} {{.Current}}" 2^>nul') do (
+    echo %%c | findstr /C:"true" >nul 2>&1
+    if not errorlevel 1 (
+        set "DOCKER_CURRENT_CONTEXT=%%c"
+        call :log "INFO" "Current Docker context: %%c"
+    )
+)
+
+:: Try standard docker info check first
 docker info >nul 2>&1
-if errorlevel 1 (
-    call :log "ERROR" "Docker is not running. Please start Docker Desktop."
-    exit /b 1
-) else (
+if not errorlevel 1 (
     call :log "SUCCESS" "Docker is running"
+) else (
+    :: If that fails, try checking with context-specific commands
+    call :log "INFO" "Checking alternative Docker contexts..."
+    
+    :: Try desktop-linux context if we're using it
+    docker context use desktop-linux >nul 2>&1
+    if not errorlevel 1 (
+        docker info >nul 2>&1
+        if not errorlevel 1 (
+            call :log "SUCCESS" "Docker is running in desktop-linux context"
+        ) else (
+            call :log "ERROR" "Docker is not running. Please start Docker Desktop."
+            exit /b 1
+        )
+    ) else (
+        :: Try docker ps as a fallback check
+        docker ps >nul 2>&1
+        if not errorlevel 1 (
+            call :log "SUCCESS" "Docker is running"
+        ) else (
+            call :log "ERROR" "Docker is not running. Please start Docker Desktop."
+            exit /b 1
+        )
+    )
 )
 
 :: Verify Docker Compose v2 is available

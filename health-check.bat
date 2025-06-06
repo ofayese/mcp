@@ -50,28 +50,72 @@ set HEALTH_CHECK=%ERRORLEVEL%
 
 :: Check Docker connectivity
 echo INFO: Checking Docker connectivity...
-docker info >nul 2>&1
-if %ERRORLEVEL% EQU 0 (
-    echo SUCCESS: Docker is accessible
-    
-:: Check running MCP containers
-    for /f "tokens=*" %%a in ('docker ps --filter "name=mcp" --format "{{.Names}}" 2^>nul') do (
-        set "CONTAINERS=!CONTAINERS!%%a "
+
+:: Check for Docker contexts
+for /f "tokens=*" %%c in ('docker context ls --format "{{.Name}} {{.Current}}" 2^>nul') do (
+    echo %%c | findstr /C:"true" >nul 2>&1
+    if not errorlevel 1 (
+        set "DOCKER_CURRENT_CONTEXT=%%c"
+        echo INFO: Current Docker context: %%c
     )
-    
-    :: Also check docker compose status
-    echo INFO: Checking Docker Compose status...
-    docker compose ps --format "table {{.Name}}\t{{.Status}}" 2>nul
-    
-    if defined CONTAINERS (
-        echo SUCCESS: MCP containers running:
-        for %%a in (%CONTAINERS%) do echo   - %%a
-    ) else (
-        echo WARNING: No MCP containers found running
-    )
-) else (
-    echo WARNING: Docker is not accessible or not installed
 )
+
+:: Try standard docker info check first
+docker info >nul 2>&1
+if not errorlevel 1 (
+    echo SUCCESS: Docker is accessible
+    goto docker_check_containers
+) else (
+    :: If that fails, try checking with context-specific commands
+    echo INFO: Checking alternative Docker contexts...
+    
+    :: Try desktop-linux context if it's available
+    docker context use desktop-linux >nul 2>&1
+    if not errorlevel 1 (
+        docker info >nul 2>&1
+        if not errorlevel 1 (
+            echo SUCCESS: Docker is accessible in desktop-linux context
+            goto docker_check_containers
+        ) else (
+            echo WARNING: Docker is not accessible in desktop-linux context
+            goto docker_not_accessible
+        )
+    ) else (
+        :: Try docker ps as a fallback check
+        docker ps >nul 2>&1
+        if not errorlevel 1 (
+            echo SUCCESS: Docker is accessible
+            goto docker_check_containers
+        ) else (
+            echo WARNING: Docker is not accessible or not installed
+            goto docker_not_accessible
+        )
+    )
+)
+
+:docker_check_containers
+:: Check running MCP containers
+for /f "tokens=*" %%a in ('docker ps --filter "name=mcp" --format "{{.Names}}" 2^>nul') do (
+    set "CONTAINERS=!CONTAINERS!%%a "
+)
+
+:: Also check docker compose status
+echo INFO: Checking Docker Compose status...
+docker compose ps --format "table {{.Name}}\t{{.Status}}" 2>nul
+
+if defined CONTAINERS (
+    echo SUCCESS: MCP containers running:
+    for %%a in (%CONTAINERS%) do echo   - %%a
+) else (
+    echo WARNING: No MCP containers found running
+)
+goto after_docker_check
+
+:docker_not_accessible
+echo WARNING: Docker is not accessible or not installed
+goto after_docker_check
+
+:after_docker_check
 
 :: Check MCP tools endpoint
 echo INFO: Checking MCP tools at %TOOLS_URL%...
